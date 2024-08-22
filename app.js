@@ -25,6 +25,16 @@ let operator = '';
 currentValue.textContent = inputs[0] || 0;
 calHistory.textContent = '';
 
+//plus function
+function plus(arr) {
+  const sum = arr.reduce((total, value) => {
+    return total + value;
+  }, 0);
+  return sum;
+  //   currentValue.textContent = sum;
+  //   inputs = [sum];
+}
+
 //create click event to the digit pad and show it on the display
 key7.addEventListener('click', function (e) {
   const value = +e.target.textContent; // number 7
@@ -39,41 +49,60 @@ key7.addEventListener('click', function (e) {
   console.log(inputs, temporary);
 });
 
+//[0] //false
 //create event to the operator
 plusKey.addEventListener('click', function (e) {
-  operator = e.target.textContent; // string '+'
-  if (!inputs[0]) {
+  if (!inputs[0] && inputs[0] !== 0) {
     //tap 777 +
     if (temporary) {
       inputs.push(+temporary);
+      temporary = '';
     } else {
       //tap +
       temporary = '0';
       inputs.push(+temporary);
+      temporary = '';
     }
-  }  
-  temporary = '';
-  
-  //with input[0] has value do nothing
+  } else if (inputs[0] || inputs[0] === 0) {
+    //check if therse is history, if no history do nothing
+    if (calHistory.textContent) {
+      inputs.push(+temporary); //[154, 77]
+      if (operator == '+') {
+        const sum = plus(inputs); // 154 + 77
+        calHistory.textContent = `${inputs[0]} ${operator} ${inputs[1]}`;
+        inputs = [sum];
+        currentValue.textContent = sum;
+      }
+    }
+    temporary = '';
+  }
 
   plusKey.classList.toggle('focused');
+  operator = e.target.textContent; // string '+'
   console.log(inputs, operator, temporary);
 });
 
 //create event to end the cal-cycle
 equalKey.addEventListener('click', function (e) {
   if (!operator) return;
-  if (operator && !temporary) return plusKey.classList.toggle('focused');
+  if (operator && !temporary) {
+    plusKey.classList.toggle('focused');
+    operator = '';
+    calHistory.textContent = '';
+    return;
+  }
+  //if there is temporary
   inputs.push(+temporary);
   temporary = '';
   console.log(inputs, temporary);
-  if ((operator = '+')) {
+  if (operator == '+') {
     const sum = inputs.reduce((total, value) => {
       return total + value;
     }, 0);
     currentValue.textContent = sum;
     inputs = [sum];
   }
+  operator = '';
   calHistory.textContent = '';
   console.log(inputs, temporary);
 });
