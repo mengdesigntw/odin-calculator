@@ -14,6 +14,8 @@ const decimalKey = document.querySelector('#decimal');
 const deleteKey = document.querySelector('#delete');
 const equalKey = document.querySelector('#equal');
 
+// const operators = document.querySelectorAll('.operator')
+
 const key7 = document.querySelector('#key7');
 
 //create variable to store input value and operator
@@ -27,8 +29,9 @@ key7.addEventListener('click', function (e) {
   const value = +e.target.textContent; // number 7
   currentValue.textContent = value;
   //show history if inputs[0] has value
-  if (inputs[0]) {
+  if (inputs[0] || inputs[0] == 0) {
     calHistory.textContent = `${inputs[0]} ${operator}`;
+    plusKey.classList.toggle('focused');
   }
   inputs.push(value);
   console.log(inputs);
@@ -38,6 +41,9 @@ key7.addEventListener('click', function (e) {
 plusKey.addEventListener('click', function (e) {
   const value = e.target.textContent;
   operator = value; // string '+'
+  if (!inputs[0]) inputs.push(0);
+  plusKey.classList.toggle('focused');
+  console.log(inputs, operator)
 });
 
 //create event to end the cal-cycle
@@ -48,7 +54,8 @@ equalKey.addEventListener('click', function (e) {
       return total + value;
     }, 0);
     currentValue.textContent = sum;
+    inputs = [sum];
   }
   calHistory.textContent = '';
-  inputs = [];
+  console.log(inputs)
 });
