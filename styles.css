@@ -24,17 +24,22 @@ body {
     background-color: rgb(250, 244, 236);
 }
 
-.display {
+.display-view {
     padding: 1rem;
     border-radius: 0.5rem;
     background-color: antiquewhite;
     margin-bottom: 1rem;
     text-align: right;
+    min-height: 93px;
+    display: flex;
+    flex-direction: column;
+    align-items: right;
+    justify-content: flex-end;
+    gap: .25rem;
 }
 
 .history {
     opacity: 0.6;
-    margin-bottom: 0.25rem;
 }
 
 .current {
