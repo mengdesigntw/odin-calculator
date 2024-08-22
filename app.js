@@ -31,13 +31,13 @@ function plus(arr) {
     return total + value;
   }, 0);
   return sum;
-  //   currentValue.textContent = sum;
-  //   inputs = [sum];
 }
 
 //create click event to the digit pad and show it on the display
 key7.addEventListener('click', function (e) {
   const value = +e.target.textContent; // number 7
+  if (!operator) inputs = [];
+
   //show history if inputs[0] has value, and toggle the focused state off when temporary is falsy
   if ((inputs[0] || inputs[0] === 0) && !temporary) {
     calHistory.textContent = `${inputs[0]} ${operator}`;
@@ -104,5 +104,5 @@ equalKey.addEventListener('click', function (e) {
   }
   operator = '';
   calHistory.textContent = '';
-  console.log(inputs, temporary);
+  console.log(inputs, operator, temporary);
 });
