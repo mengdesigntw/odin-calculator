@@ -33,52 +33,55 @@ function plus(arr) {
   return sum;
 }
 
-//create click event to the digit pad and show it on the display
-key7.addEventListener('click', function (e) {
-  const value = +e.target.textContent; // number 7
-  if (!operator) inputs = [];
 
-  //show history if inputs[0] has value, and toggle the focused state off when temporary is falsy
-  if ((inputs[0] || inputs[0] === 0) && !temporary) {
+key7.addEventListener('click', function (e) {
+//store the value in temporary as string and concat
+//then show it on currentValue
+temporary += +e.target.textContent
+currentValue.textContent = temporary
+
+//if there's stored operator, then show inputs[0] and stored operator on the history. 
+//also toggle the operator focus off only when first entry
+if(operator) {
     calHistory.textContent = `${inputs[0]} ${operator}`;
-    plusKey.classList.toggle('focused');
-  }
-  //store in temp
-  temporary += value; //temp: '7777' string
-  currentValue.textContent = temporary;
-  console.log(inputs, temporary);
+    if(temporary.length == 1) plusKey.classList.toggle('focused')
+} else {
+    inputs = []
+}
+console.log(inputs, operator, temporary);
+  
 });
 
-//[0] //false
-//create event to the operator
-plusKey.addEventListener('click', function (e) {
-  if (!inputs[0] && inputs[0] !== 0) {
-    //tap 777 +
-    if (temporary) {
-      inputs.push(+temporary);
-      temporary = '';
-    } else {
-      //tap +
-      temporary = '0';
-      inputs.push(+temporary);
-      temporary = '';
-    }
-  } else if (inputs[0] || inputs[0] === 0) {
-    //check if therse is history, if no history do nothing
-    if (calHistory.textContent) {
-      inputs.push(+temporary); //[154, 77]
-      if (operator == '+') {
-        const sum = plus(inputs); // 154 + 77
-        calHistory.textContent = `${inputs[0]} ${operator} ${inputs[1]}`;
-        inputs = [sum];
-        currentValue.textContent = sum;
-      }
-    }
-    temporary = '';
-  }
 
-  plusKey.classList.toggle('focused');
-  operator = e.target.textContent; // string '+'
+plusKey.addEventListener('click', function (e) {
+  //when there is temporary then push to the inputs, then clear temporary.
+  //and toggole the focus on.
+
+  //if there's stored operator, display cal history with previous input and operator
+  //then do the math and re-assign the value to input and display in currentValue
+
+  //after above done, re-assign '+' to operator
+  if (temporary) {
+    inputs.push(+temporary);
+    temporary = '';
+    plusKey.classList.toggle('focused');
+    if (operator == '+') {
+      calHistory.textContent = `${inputs[0]} ${operator}`;
+      const sum = plus(inputs);
+      inputs = [sum];
+      currentValue.textContent = inputs[0];
+    }
+    operator = e.target.textContent;
+  }
+  //when there is no temporary then do nothing
+  // unless the intitial [] is also empty, then push a 0 as the first input
+  //and toggle on focus on
+  //assign '+' to operator
+  if (!temporary && !inputs.length) {
+    inputs.push(0);
+    plusKey.classList.toggle('focused');
+    operator = e.target.textContent;
+  }
   console.log(inputs, operator, temporary);
 });
 
