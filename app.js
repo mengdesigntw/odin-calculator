@@ -14,9 +14,8 @@ const decimalKey = document.querySelector('#decimal');
 const deleteKey = document.querySelector('#delete');
 const equalKey = document.querySelector('#equal');
 
-// const operators = document.querySelectorAll('.operator')
-
-const key7 = document.querySelector('#key7');
+const operators = Array.from(document.querySelectorAll('.operator'));
+const digits = Array.from(document.querySelectorAll('.digit'));
 
 //state variables
 let temporary = '';
@@ -25,35 +24,43 @@ let operator = '';
 currentValue.textContent = inputs[0] || 0;
 calHistory.textContent = '';
 
-//plus function
-function plus(arr) {
-  const sum = arr.reduce((total, value) => {
-    return total + value;
-  }, 0);
-  return sum;
+function toggleOperatorFocus(operator) {
+  if (operator == '+') plusKey.classList.toggle('focused');
+  if (operator == '-') minusKey.classList.toggle('focused');
+  if (operator == 'x') multiplyKey.classList.toggle('focused');
+  if (operator == '/') divideKey.classList.toggle('focused');
 }
 
-///////DIGIT//////
-key7.addEventListener('click', function (e) {
+//Math function
+function doTheMath(operator, arr) {
+  if (operator == '+') return arr.reduce((total, value) => total + value, 0);
+  if (operator == '-') return arr.reduce((total, value) => total - value);
+  if (operator == 'x') return arr.reduce((total, value) => total * value, 1);
+  if (operator == '/') return arr.reduce((total, value) => total / value);
+
+}
+
+function handleDigitClick(e) {
   temporary += e.target.textContent; //string
   currentValue.textContent = temporary;
   if (operator) {
     calHistory.textContent = `${inputs[inputs.length - 1]} ${operator}`;
-    if (temporary.length == 1) plusKey.classList.toggle('focused');   //only when first entry
+    if (temporary.length == 1) toggleOperatorFocus(operator); //only when first entry
   } else {
     inputs = []; //start clean
   }
-});
+}
 
-///OPERATOR////
-plusKey.addEventListener('click', function (e) {
+function handleOperatorClick(e) {
   if (temporary) {
     inputs.push(+temporary);
-    plusKey.classList.toggle('focused');
     if (inputs.length > 2) inputs.shift(); //remove the first one
-    if (operator == '+') {
-      const sum = plus(inputs);
-      inputs.push(sum);
+    if (!operator) {
+      toggleOperatorFocus(e.target.textContent);
+    } else {
+      toggleOperatorFocus(e.target.textContent);
+      const result = doTheMath(operator, inputs); //plus(inputs);
+      inputs.push(result);
       inputs.shift();
       calHistory.textContent = `${inputs[0]} ${operator}`;
       currentValue.textContent = inputs[1];
@@ -62,26 +69,31 @@ plusKey.addEventListener('click', function (e) {
   if (!temporary) {
     if (!inputs.length) {
       inputs.push(0); //initiate a 0
-      plusKey.classList.toggle('focused');
-    } else if (!operator) { // 7 = +
-      plusKey.classList.toggle('focused');
+      toggleOperatorFocus(e.target.textContent);
+    } else if (!operator) {
+      // 7 = +
+      toggleOperatorFocus(e.target.textContent);
     }
   }
   temporary = '';
   operator = e.target.textContent;
-});
+}
+
+digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
+operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
+
 
 equalKey.addEventListener('click', function (e) {
-  if (operator && !temporary) plusKey.classList.toggle('focused');
+  if (operator && !temporary) toggleOperatorFocus(operator);
   if (temporary) {
     inputs.push(+temporary); // '7'
     temporary = '';
     if (inputs.length > 2) inputs.shift();
   }
-  if (operator == '+') {
-    const sum = plus(inputs);
-    inputs = [sum];
-    currentValue.textContent = sum;
+  if (operator) {
+    const result = doTheMath(operator, inputs); //debug: pay attention on focus operator and history operator 
+    inputs = [result];
+    currentValue.textContent = result;
   }
   operator = '';
   calHistory.textContent = '';
