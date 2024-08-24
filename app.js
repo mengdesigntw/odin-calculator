@@ -1,6 +1,10 @@
 console.log('hi');
 //List to do:
-
+//show comma when digits hit 4 (%3 == 1)
+//decimal logic
+//show custom error message when user try to divide number by 0
+//delete logic (only when user inputs or operator key is focus)
+//mousedown and up event
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -26,6 +30,22 @@ let storedOperator = '';
 let total = 0;
 setCurrentDisplay(0);
 setCalHistory(); //initialize
+
+//state variables only for equalKey to repeat last action
+let opKey = '';
+let lastVal = null;
+
+function allClear() {
+  toggleOperatorFocus(storedOperator);
+  temporary = '';
+  inputs = [];
+  storedOperator = '';
+  total = 0;
+  setCurrentDisplay(0);
+  setCalHistory();
+  opKey = '';
+  lastVal = null;
+}
 
 function setCurrentDisplay(val) {
   currentValue.textContent = val;
@@ -56,14 +76,18 @@ function handleDigitClick(e) {
   setCurrentDisplay(temporary);
   if (storedOperator) {
     setCalHistory(inputs[inputs.length - 1], storedOperator);
-  } else { //start clean
+  } else {
+    //start clean
     inputs = [];
     setCalHistory();
   }
 }
 
+clearKey.addEventListener('click', allClear);
+
 function handleOperatorClick(e) {
   const currentOperator = e.target.textContent;
+  lastVal = null;
   if (temporary) {
     inputs.push(+temporary);
     if (inputs.length > 2) inputs.shift(); //remove the first one
@@ -80,10 +104,10 @@ function handleOperatorClick(e) {
   }
   if (!temporary) {
     toggleOperatorFocus(currentOperator);
-    if(inputs.length && !storedOperator) { // 7 = +
-        setCalHistory();
-    } else { // 7 = +
-        toggleOperatorFocus(storedOperator);
+    if (inputs.length && !storedOperator && !opKey) {
+      setCalHistory();
+    } else {
+      toggleOperatorFocus(storedOperator);
     }
     if (!inputs.length) {
       inputs.push(0); //initiate a 0
@@ -96,13 +120,10 @@ function handleOperatorClick(e) {
 digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 
-//state variables only for equalKey to repeat last action
-let opKey = '';
-let lastVal = null;
-
-equalKey.addEventListener('click', function (e) {
+equalKey.addEventListener('click', function () {
   if (opKey && lastVal) {
     total = doTheMath(opKey, total, lastVal);
+    setCalHistory(inputs[0], opKey, lastVal);
   }
   if (storedOperator && !temporary) {
     const lastInput = inputs[inputs.length - 1];
@@ -110,24 +131,25 @@ equalKey.addEventListener('click', function (e) {
     total = doTheMath(storedOperator, lastInput, lastInput);
     opKey = storedOperator;
     lastVal = lastInput;
+    setCalHistory(lastVal, opKey, lastVal);
   }
   if (temporary) {
     inputs.push(+temporary); // '7'
     temporary = '';
     const lastInput = inputs[inputs.length - 1];
     if (inputs.length > 2) inputs.shift(); // if 3
-    if (inputs.length < 2) { // if 1
+    if (inputs.length < 2) {
+      // if 1
       total = lastInput;
+      setCalHistory();
     } else {
       lastVal = lastInput;
       opKey = storedOperator;
       total = doTheMath(storedOperator, inputs[0], inputs[1]);
       toggleOperatorFocus(storedOperator);
+      setCalHistory(inputs[0], opKey, lastVal);
     }
   }
-
-  //display logic
-  opKey && typeof lastVal == 'number' ? setCalHistory(inputs[0], opKey, lastVal) : setCalHistory();
 
   inputs = [total];
   setCurrentDisplay(total);
