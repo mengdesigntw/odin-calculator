@@ -1,4 +1,7 @@
 console.log('hi');
+//List to do:
+//add logic when changing operator when a operator is selected
+//type in 0 behavior
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -18,11 +21,20 @@ const operators = Array.from(document.querySelectorAll('.operator'));
 const digits = Array.from(document.querySelectorAll('.digit'));
 
 //state variables
-let temporary = '';
-let inputs = [];
+let temporary = ''; //for multiple digit
+let inputs = []; //track on input 1 and input 2
 let operator = '';
-currentValue.textContent = inputs[0] || 0;
-calHistory.textContent = '';
+let total = 0;
+setCurrentDisplay(0);
+setCalHistory(); //initialize
+
+function setCurrentDisplay(val) {
+  currentValue.textContent = val;
+}
+
+function setCalHistory(val1 = '', operator = '', val2 = '') {
+  calHistory.textContent = `${val1} ${operator} ${val2}`;
+}
 
 function toggleOperatorFocus(operator) {
   if (operator == '+') plusKey.classList.toggle('focused');
@@ -32,22 +44,23 @@ function toggleOperatorFocus(operator) {
 }
 
 //Math function
-function doTheMath(operator, arr) {
-  if (operator == '+') return arr.reduce((total, value) => total + value, 0);
-  if (operator == '-') return arr.reduce((total, value) => total - value);
-  if (operator == 'x') return arr.reduce((total, value) => total * value, 1);
-  if (operator == '/') return arr.reduce((total, value) => total / value);
-
+function doTheMath(operator, val1, val2) {
+  if (operator == '+') return val1 + val2;
+  if (operator == '-') return val1 - val2;
+  if (operator == 'x') return val1 * val2;
+  if (operator == '/') return val1 / val2;
 }
 
 function handleDigitClick(e) {
   temporary += e.target.textContent; //string
-  currentValue.textContent = temporary;
+  setCurrentDisplay(temporary);
   if (operator) {
-    calHistory.textContent = `${inputs[inputs.length - 1]} ${operator}`;
+    setCalHistory(inputs[inputs.length - 1], operator);
     if (temporary.length == 1) toggleOperatorFocus(operator); //only when first entry
   } else {
-    inputs = []; //start clean
+    //start clean
+    inputs = []; 
+    setCalHistory()
   }
 }
 
@@ -59,11 +72,10 @@ function handleOperatorClick(e) {
       toggleOperatorFocus(e.target.textContent);
     } else {
       toggleOperatorFocus(e.target.textContent);
-      const result = doTheMath(operator, inputs); //plus(inputs);
-      inputs.push(result);
-      inputs.shift();
-      calHistory.textContent = `${inputs[0]} ${operator}`;
-      currentValue.textContent = inputs[1];
+      total = doTheMath(operator, inputs[0], inputs[1]);
+      setCalHistory(inputs[0], operator, inputs[1]);
+      setCurrentDisplay(total);
+      inputs = [inputs[1], total];
     }
   }
   if (!temporary) {
@@ -73,6 +85,7 @@ function handleOperatorClick(e) {
     } else if (!operator) {
       // 7 = +
       toggleOperatorFocus(e.target.textContent);
+      setCalHistory()
     }
   }
   temporary = '';
@@ -82,19 +95,40 @@ function handleOperatorClick(e) {
 digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 
+//state variables only for equalKey to repeat last action
+let opKey = '';
+let lastVal = null;
 
 equalKey.addEventListener('click', function (e) {
-  if (operator && !temporary) toggleOperatorFocus(operator);
+  if (opKey && lastVal) {
+    total = doTheMath(opKey, total, lastVal);
+  }
+  if (operator && !temporary) {
+    const lastInput = inputs[inputs.length - 1];
+    toggleOperatorFocus(operator);
+    total = doTheMath(operator, lastInput, lastInput);
+    opKey = operator;
+    lastVal = lastInput;
+  }
   if (temporary) {
     inputs.push(+temporary); // '7'
     temporary = '';
-    if (inputs.length > 2) inputs.shift();
+    const lastInput = inputs[inputs.length - 1];
+    if (inputs.length > 2) inputs.shift(); // if 3
+    if (inputs.length < 2) {
+      // if 1
+      total = lastInput;
+    } else {
+      lastVal = lastInput;
+      opKey = operator;
+      total = doTheMath(operator, inputs[0], inputs[1]);
+    }
   }
-  if (operator) {
-    const result = doTheMath(operator, inputs); //debug: pay attention on focus operator and history operator 
-    inputs = [result];
-    currentValue.textContent = result;
-  }
+
+  //display logic
+  opKey && lastVal ? setCalHistory('', opKey, lastVal) : setCalHistory();
+
+  inputs = [total];
+  setCurrentDisplay(total);
   operator = '';
-  calHistory.textContent = '';
 });
