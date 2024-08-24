@@ -1,6 +1,6 @@
 console.log('hi');
 //List to do:
-//type in 0 behavior
+//operator key should remain focus while 2nd input
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -52,10 +52,11 @@ function doTheMath(operator, val1, val2) {
 
 function handleDigitClick(e) {
   temporary += e.target.textContent; //string
+  if(temporary.length > 1 && temporary.at(0) == 0) temporary = temporary.slice(1)
   setCurrentDisplay(temporary);
   if (operator) {
     setCalHistory(inputs[inputs.length - 1], operator);
-    if (temporary.length == 1) toggleOperatorFocus(operator); //only when first entry
+    if (temporary.length == 1 && temporary !== '0') toggleOperatorFocus(operator); //only when first entry
   } else {
     //start clean
     inputs = []; 
