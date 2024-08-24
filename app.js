@@ -1,6 +1,5 @@
 console.log('hi');
 //List to do:
-//add logic when changing operator when a operator is selected
 //type in 0 behavior
 
 //create variables for nodes
@@ -86,6 +85,10 @@ function handleOperatorClick(e) {
       // 7 = +
       toggleOperatorFocus(e.target.textContent);
       setCalHistory()
+    } else {
+        //7 + -
+        toggleOperatorFocus(e.target.textContent)
+        toggleOperatorFocus(operator)
     }
   }
   temporary = '';
