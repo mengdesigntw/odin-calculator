@@ -4,7 +4,7 @@ console.log('hi');
 //decimal logic
 //show custom error message when user try to divide number by 0
 //delete logic (only when user inputs or operator key is focus)
-//mousedown and up event
+//ac or c
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -22,6 +22,7 @@ const equalKey = document.querySelector('#equal');
 
 const operators = Array.from(document.querySelectorAll('.operator'));
 const digits = Array.from(document.querySelectorAll('.digit'));
+const pads =Array.from(document.querySelectorAll('.pad'))
 
 //state variables
 let temporary = ''; //for multiple digit
@@ -71,6 +72,8 @@ function doTheMath(operator, val1, val2) {
 }
 
 function handleDigitClick(e) {
+  opKey = '';
+  lastVal = null;
   temporary += e.target.textContent; //string
   if (temporary.length > 1 && temporary.at(0) == 0) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
@@ -87,6 +90,7 @@ clearKey.addEventListener('click', allClear);
 
 function handleOperatorClick(e) {
   const currentOperator = e.target.textContent;
+  opKey = '';
   lastVal = null;
   if (temporary) {
     inputs.push(+temporary);
@@ -104,7 +108,7 @@ function handleOperatorClick(e) {
   }
   if (!temporary) {
     toggleOperatorFocus(currentOperator);
-    if (inputs.length && !storedOperator && !opKey) {
+    if (inputs.length && !storedOperator) {
       setCalHistory();
     } else {
       toggleOperatorFocus(storedOperator);
@@ -119,6 +123,16 @@ function handleOperatorClick(e) {
 
 digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
+pads.forEach((pad) => {
+    pad.addEventListener('mousedown', function(e){
+       e.target.style.boxShadow = '0px 1px 2px rgba(61, 37, 5, 0.25)'
+       e.target.style.filter = 'brightness(0.95)'
+    })
+    pad.addEventListener('mouseup', function(e){
+        e.target.style.boxShadow = '1px 2px 4px rgba(61, 37, 5, 0.25)'
+        e.target.style.filter = 'brightness(1)'
+     })
+})
 
 equalKey.addEventListener('click', function () {
   if (opKey && lastVal) {
@@ -134,7 +148,7 @@ equalKey.addEventListener('click', function () {
     setCalHistory(lastVal, opKey, lastVal);
   }
   if (temporary) {
-    inputs.push(+temporary); // '7'
+    inputs.push(+temporary);
     temporary = '';
     const lastInput = inputs[inputs.length - 1];
     if (inputs.length > 2) inputs.shift(); // if 3
