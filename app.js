@@ -97,10 +97,12 @@ pads.forEach((pad) => {
 
 //Math function
 function doTheMath(operator, val1, val2) {
-  if (operator == '+') return val1 + val2;
-  if (operator == '-') return val1 - val2;
-  if (operator == 'x') return val1 * val2;
-  if (operator == '/') return val1 / val2;
+  let result = 0;
+  if (operator == '+') result = val1 + val2;
+  if (operator == '-') result = val1 - val2;
+  if (operator == 'x') result = val1 * val2;
+  if (operator == '/') result = val1 / val2;
+  return parseFloat(result.toFixed(10));
 }
 
 //handle Click
@@ -108,7 +110,7 @@ function handleDigitClick(e) {
   opKey = '';
   lastVal = null;
   temporary += e.target.textContent; //string
-  if (temporary.length > 1 && temporary.at(0) == 0) temporary = temporary.slice(1);
+  if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
   if (storedOperator) {
     setCalHistory(inputs[inputs.length - 1], storedOperator);
@@ -238,5 +240,15 @@ equalKey.addEventListener('click', function () {
   inputs = [total];
   setCurrentDisplay(total);
   storedOperator = '';
+  setClearDisplay();
+});
+
+decimalKey.addEventListener('click', function (e) {
+  if (!temporary) {
+    temporary = '0.';
+  } else if (!temporary.includes('.')) {
+    temporary += e.target.textContent;
+  }
+  setCurrentDisplay(temporary);
   setClearDisplay();
 });
