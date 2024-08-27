@@ -22,7 +22,7 @@ const equalKey = document.querySelector('#equal');
 
 const operators = Array.from(document.querySelectorAll('.operator'));
 const digits = Array.from(document.querySelectorAll('.digit'));
-const pads =Array.from(document.querySelectorAll('.pad'))
+const pads = Array.from(document.querySelectorAll('.pad'));
 
 //state variables
 let temporary = ''; //for multiple digit
@@ -83,38 +83,83 @@ function handleDigitClick(e) {
     //start clean
     inputs = [];
     setCalHistory();
+    total = 0;
   }
 }
 
 clearKey.addEventListener('click', allClear);
+deleteKey.addEventListener('click', function (e) {
+  if (opKey) {
+    allClear();
+  }
+
+  if (temporary) {
+    if (temporary.length == 1) {
+      setCurrentDisplay(0);
+      temporary = '0';
+      if (!inputs.length) allClear();
+    }
+    if (temporary.length > 1) {
+      temporary = temporary.slice(0, -1);
+      setCurrentDisplay(temporary);
+    }
+  }
+  if (!temporary) {
+    if (!storedOperator && inputs.length) {
+      const lastInput = inputs[inputs.length - 1].toString(); // '7'
+      if (lastInput.length == 1) {
+        setCurrentDisplay(0);
+        if (inputs.length == 1) allClear();
+      }
+      if (lastInput.length > 1) {
+        temporary = lastInput.slice(0, -1);
+        setCurrentDisplay(temporary);
+        if (inputs.length == 2) allClear();
+      }
+      inputs = [];
+      total = 0;
+    }
+    if (storedOperator) {
+      toggleOperatorFocus(storedOperator);
+      storedOperator = '';
+    }
+  }
+  //
+});
 
 function handleOperatorClick(e) {
   const currentOperator = e.target.textContent;
   opKey = '';
   lastVal = null;
-  if (temporary) {
-    inputs.push(+temporary);
-    if (inputs.length > 2) inputs.shift(); //remove the first one
-    if (!storedOperator || storedOperator !== currentOperator) {
-      toggleOperatorFocus(currentOperator);
-      toggleOperatorFocus(storedOperator);
-    }
-    if (storedOperator) {
-      total = doTheMath(storedOperator, inputs[0], inputs[1]);
-      setCalHistory(inputs[0], storedOperator, inputs[1]);
-      setCurrentDisplay(total);
-      inputs = [inputs[1], total];
-    }
-  }
   if (!temporary) {
     toggleOperatorFocus(currentOperator);
-    if (inputs.length && !storedOperator) {
-      setCalHistory();
-    } else {
+    if (!inputs.length) inputs.push(0); //initiate a 0
+    if (inputs.length >= 1) {
+      setCalHistory(inputs[inputs.length - 1], currentOperator);
       toggleOperatorFocus(storedOperator);
+      if (inputs.length == 1 && !storedOperator) setCalHistory();
     }
-    if (!inputs.length) {
-      inputs.push(0); //initiate a 0
+  }
+
+  if (temporary) {
+    if (temporary == '0') {
+      toggleOperatorFocus(currentOperator);
+      toggleOperatorFocus(storedOperator);
+      setCalHistory(inputs[inputs.length - 1], currentOperator);
+    }
+    if (temporary !== '0') {
+      inputs.push(+temporary);
+      if (inputs.length > 2) inputs.shift(); //remove the first one
+      if (!storedOperator || storedOperator !== currentOperator) {
+        toggleOperatorFocus(currentOperator);
+        toggleOperatorFocus(storedOperator);
+      }
+      if (storedOperator) {
+        total = doTheMath(storedOperator, inputs[0], inputs[1]);
+        setCalHistory(inputs[0], storedOperator, inputs[1]);
+        setCurrentDisplay(total);
+        inputs = [inputs[1], total];
+      }
     }
   }
   temporary = '';
@@ -124,15 +169,15 @@ function handleOperatorClick(e) {
 digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 pads.forEach((pad) => {
-    pad.addEventListener('mousedown', function(e){
-       e.target.style.boxShadow = '0px 1px 2px rgba(61, 37, 5, 0.25)'
-       e.target.style.filter = 'brightness(0.95)'
-    })
-    pad.addEventListener('mouseup', function(e){
-        e.target.style.boxShadow = '1px 2px 4px rgba(61, 37, 5, 0.25)'
-        e.target.style.filter = 'brightness(1)'
-     })
-})
+  pad.addEventListener('mousedown', function (e) {
+    e.target.style.boxShadow = '0px 1px 2px rgba(61, 37, 5, 0.25)';
+    e.target.style.filter = 'brightness(0.95)';
+  });
+  pad.addEventListener('mouseup', function (e) {
+    e.target.style.boxShadow = '1px 2px 4px rgba(61, 37, 5, 0.25)';
+    e.target.style.filter = 'brightness(1)';
+  });
+});
 
 equalKey.addEventListener('click', function () {
   if (opKey && lastVal) {
