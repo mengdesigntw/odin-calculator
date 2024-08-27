@@ -3,8 +3,6 @@ console.log('hi');
 //show comma when digits hit 4 (%3 == 1)
 //decimal logic
 //show custom error message when user try to divide number by 0
-//delete logic (only when user inputs or operator key is focus)
-//ac or c
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -36,6 +34,7 @@ setCalHistory(); //initialize
 let opKey = '';
 let lastVal = null;
 
+//clear function
 function allClear() {
   toggleOperatorFocus(storedOperator);
   temporary = '';
@@ -46,14 +45,36 @@ function allClear() {
   setCalHistory();
   opKey = '';
   lastVal = null;
+  setClearDisplay();
 }
 
+function clearUnit() {
+  if (temporary) {
+    setCurrentDisplay(0);
+    temporary = '0';
+    if (!inputs.length) allClear();
+  }
+  if (!temporary) {
+    if (!storedOperator && inputs.length) allClear();
+    if (storedOperator) {
+      toggleOperatorFocus(storedOperator);
+      storedOperator = '';
+    }
+  }
+  setClearDisplay();
+}
+
+//setting Display function
 function setCurrentDisplay(val) {
   currentValue.textContent = val;
 }
 
 function setCalHistory(val1 = '', operator = '', val2 = '') {
   calHistory.textContent = `${val1} ${operator} ${val2}`;
+}
+
+function setClearDisplay() {
+  currentValue.textContent == '0' || opKey ? (clearKey.textContent = 'AC') : (clearKey.textContent = 'C');
 }
 
 function toggleOperatorFocus(operator) {
@@ -63,6 +84,17 @@ function toggleOperatorFocus(operator) {
   if (operator == '/') divideKey.classList.toggle('focused');
 }
 
+pads.forEach((pad) => {
+  pad.addEventListener('mousedown', function (e) {
+    e.target.style.boxShadow = '0px 1px 2px rgba(61, 37, 5, 0.25)';
+    e.target.style.filter = 'brightness(0.95)';
+  });
+  pad.addEventListener('mouseup', function (e) {
+    e.target.style.boxShadow = '1px 2px 4px rgba(61, 37, 5, 0.25)';
+    e.target.style.filter = 'brightness(1)';
+  });
+});
+
 //Math function
 function doTheMath(operator, val1, val2) {
   if (operator == '+') return val1 + val2;
@@ -71,6 +103,7 @@ function doTheMath(operator, val1, val2) {
   if (operator == '/') return val1 / val2;
 }
 
+//handle Click
 function handleDigitClick(e) {
   opKey = '';
   lastVal = null;
@@ -85,47 +118,8 @@ function handleDigitClick(e) {
     setCalHistory();
     total = 0;
   }
+  setClearDisplay();
 }
-
-clearKey.addEventListener('click', allClear);
-deleteKey.addEventListener('click', function (e) {
-  if (opKey) {
-    allClear();
-  }
-
-  if (temporary) {
-    if (temporary.length == 1) {
-      setCurrentDisplay(0);
-      temporary = '0';
-      if (!inputs.length) allClear();
-    }
-    if (temporary.length > 1) {
-      temporary = temporary.slice(0, -1);
-      setCurrentDisplay(temporary);
-    }
-  }
-  if (!temporary) {
-    if (!storedOperator && inputs.length) {
-      const lastInput = inputs[inputs.length - 1].toString(); // '7'
-      if (lastInput.length == 1) {
-        setCurrentDisplay(0);
-        if (inputs.length == 1) allClear();
-      }
-      if (lastInput.length > 1) {
-        temporary = lastInput.slice(0, -1);
-        setCurrentDisplay(temporary);
-        if (inputs.length == 2) allClear();
-      }
-      inputs = [];
-      total = 0;
-    }
-    if (storedOperator) {
-      toggleOperatorFocus(storedOperator);
-      storedOperator = '';
-    }
-  }
-  //
-});
 
 function handleOperatorClick(e) {
   const currentOperator = e.target.textContent;
@@ -164,20 +158,51 @@ function handleOperatorClick(e) {
   }
   temporary = '';
   storedOperator = currentOperator;
+  setClearDisplay();
 }
 
-digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
-operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
-pads.forEach((pad) => {
-  pad.addEventListener('mousedown', function (e) {
-    e.target.style.boxShadow = '0px 1px 2px rgba(61, 37, 5, 0.25)';
-    e.target.style.filter = 'brightness(0.95)';
-  });
-  pad.addEventListener('mouseup', function (e) {
-    e.target.style.boxShadow = '1px 2px 4px rgba(61, 37, 5, 0.25)';
-    e.target.style.filter = 'brightness(1)';
-  });
+clearKey.addEventListener('click', function (e) {
+  clearKey.textContent == 'AC' ? allClear() : clearUnit();
 });
+deleteKey.addEventListener('click', function (e) {
+  if (opKey) allClear();
+  if (temporary) {
+    if (temporary.length == 1) {
+      setCurrentDisplay(0);
+      temporary = '0';
+      if (!inputs.length) allClear();
+    }
+    if (temporary.length > 1) {
+      temporary = temporary.slice(0, -1);
+      setCurrentDisplay(temporary);
+    }
+  }
+  if (!temporary) {
+    if (!storedOperator && inputs.length) {
+      const lastInput = inputs[inputs.length - 1].toString(); // '7'
+      if (lastInput.length == 1) {
+        setCurrentDisplay(0);
+        if (inputs.length == 1) allClear();
+      }
+      if (lastInput.length > 1) {
+        temporary = lastInput.slice(0, -1);
+        setCurrentDisplay(temporary);
+        if (inputs.length == 2) allClear();
+      }
+      inputs = [];
+      total = 0;
+    }
+    if (storedOperator) {
+      toggleOperatorFocus(storedOperator);
+      storedOperator = '';
+    }
+  }
+  setClearDisplay();
+});
+
+digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
+
+operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 
 equalKey.addEventListener('click', function () {
   if (opKey && lastVal) {
@@ -213,4 +238,5 @@ equalKey.addEventListener('click', function () {
   inputs = [total];
   setCurrentDisplay(total);
   storedOperator = '';
+  setClearDisplay();
 });
