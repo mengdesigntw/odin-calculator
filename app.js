@@ -1,8 +1,10 @@
 console.log('hi');
 //List to do:
+//modifier key
+//percentage key
 //show comma when digits hit 4 (%3 == 1)
-//decimal logic
 //show custom error message when user try to divide number by 0
+//set calHistory logic
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -27,12 +29,13 @@ let temporary = ''; //for multiple digit
 let inputs = []; //track on input 1 and input 2
 let storedOperator = '';
 let total = 0;
-setCurrentDisplay(0);
-setCalHistory(); //initialize
 
 //state variables only for equalKey to repeat last action
 let opKey = '';
-let lastVal = null;
+let lastVal = '';
+
+setCurrentDisplay(0);
+setCalHistory(); //initialize
 
 //clear function
 function allClear() {
@@ -41,10 +44,10 @@ function allClear() {
   inputs = [];
   storedOperator = '';
   total = 0;
+  opKey = '';
+  lastVal = '';
   setCurrentDisplay(0);
   setCalHistory();
-  opKey = '';
-  lastVal = null;
   setClearDisplay();
 }
 
@@ -59,6 +62,7 @@ function clearUnit() {
     if (storedOperator) {
       toggleOperatorFocus(storedOperator);
       storedOperator = '';
+      setCalHistory(); //7=+C
     }
   }
   setClearDisplay();
@@ -69,8 +73,29 @@ function setCurrentDisplay(val) {
   currentValue.textContent = val;
 }
 
-function setCalHistory(val1 = '', operator = '', val2 = '') {
-  calHistory.textContent = `${val1} ${operator} ${val2}`;
+function setCalHistory() {
+  if (lastVal.toString().length) {
+    if (storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${opKey} ${lastVal}`; //7+8+= +=
+    if (!storedOperator) calHistory.textContent = `${inputs[0]} ${opKey} ${lastVal}`; //7+8= 7+8==
+  } else if (inputs.length && temporary) {
+    if (inputs.length == 1 && temporary.startsWith('0.')) {
+      if (temporary.length > 2) calHistory.textContent = `${inputs[0]} ${storedOperator} ${temporary}`; //.2+.3-
+      if (temporary.length <= 2) calHistory.textContent = `${inputs[0]} ${storedOperator}`; //.2+.
+    }
+    if (inputs.length == 1 && !temporary.startsWith('0.')) calHistory.textContent = `${inputs[0]} ${storedOperator} ${temporary}`; //7+8-
+    if (inputs.length == 2 && temporary.startsWith('0.')) {
+      if (temporary.length > 2) calHistory.textContent = `${inputs[1]} ${storedOperator} ${temporary}`; //.2+.3-.4+
+      if (temporary.length <= 2) calHistory.textContent = `${inputs[1]} ${storedOperator}`; // .2+.3-.
+    }
+    if (inputs.length == 2 && !temporary.startsWith('0.')) calHistory.textContent = `${inputs[1]} ${storedOperator} ${temporary}`; //7+8-5+
+  } else if (inputs.length && !temporary) {
+    if (inputs.length == 1 && storedOperator) calHistory.textContent = `${inputs[0]} ${storedOperator}`; //7+8
+    if (inputs.length == 1 && !storedOperator) calHistory.textContent = ''; // 7=+D
+    if (inputs.length == 2 && !storedOperator) return; // 7+8-D
+    if (inputs.length == 2 && storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; //7+8-5 7+8-5D+ 7+8-+
+  } else {
+    calHistory.textContent = ''; //7+8=9 2+3=.
+  }
 }
 
 function setClearDisplay() {
@@ -108,17 +133,15 @@ function doTheMath(operator, val1, val2) {
 //handle Click
 function handleDigitClick(e) {
   opKey = '';
-  lastVal = null;
-  temporary += e.target.textContent; //string
+  lastVal = '';
+  if (!temporary && storedOperator) setCalHistory(); //7+8-5 //7+8
+  temporary += e.target.textContent;
   if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
-  if (storedOperator) {
-    setCalHistory(inputs[inputs.length - 1], storedOperator);
-  } else {
-    //start clean
-    inputs = [];
-    setCalHistory();
+  if (!storedOperator) {
+    inputs = []; //start clean
     total = 0;
+    setCalHistory(); //7+8=9
   }
   setClearDisplay();
 }
@@ -126,24 +149,26 @@ function handleDigitClick(e) {
 function handleOperatorClick(e) {
   const currentOperator = e.target.textContent;
   opKey = '';
-  lastVal = null;
+  lastVal = '';
   if (!temporary) {
     toggleOperatorFocus(currentOperator);
-    if (!inputs.length) inputs.push(0); //initiate a 0
-    if (inputs.length >= 1) {
-      setCalHistory(inputs[inputs.length - 1], currentOperator);
+    if (inputs.length > 1) {
       toggleOperatorFocus(storedOperator);
-      if (inputs.length == 1 && !storedOperator) setCalHistory();
+      storedOperator = currentOperator;
+      setCalHistory(); // 7+8-+
     }
+    if (inputs.length == 1) {
+      toggleOperatorFocus(storedOperator);
+      storedOperator = currentOperator;
+      setCalHistory(); // 7=+- 7+-
+    }
+    if (!inputs.length) inputs.push(0); // +
   }
 
   if (temporary) {
-    if (temporary == '0') {
-      toggleOperatorFocus(currentOperator);
-      toggleOperatorFocus(storedOperator);
-      setCalHistory(inputs[inputs.length - 1], currentOperator);
-    }
     if (temporary !== '0') {
+      if ((temporary == '0.')) temporary = '0';
+      setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
       inputs.push(+temporary);
       if (inputs.length > 2) inputs.shift(); //remove the first one
       if (!storedOperator || storedOperator !== currentOperator) {
@@ -152,13 +177,20 @@ function handleOperatorClick(e) {
       }
       if (storedOperator) {
         total = doTheMath(storedOperator, inputs[0], inputs[1]);
-        setCalHistory(inputs[0], storedOperator, inputs[1]);
         setCurrentDisplay(total);
         inputs = [inputs[1], total];
       }
+      temporary = '';
+    }
+    if (temporary == '0') {
+      toggleOperatorFocus(currentOperator);
+      toggleOperatorFocus(storedOperator);
+      storedOperator = currentOperator;
+      temporary = '';
+      setCalHistory(); //7+8-5D+
     }
   }
-  temporary = '';
+
   storedOperator = currentOperator;
   setClearDisplay();
 }
@@ -197,6 +229,7 @@ deleteKey.addEventListener('click', function (e) {
     if (storedOperator) {
       toggleOperatorFocus(storedOperator);
       storedOperator = '';
+      setCalHistory(); //7=+D 7+8-D
     }
   }
   setClearDisplay();
@@ -207,9 +240,9 @@ digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 
 equalKey.addEventListener('click', function () {
-  if (opKey && lastVal) {
+  if (opKey && lastVal.toString().length) {
     total = doTheMath(opKey, total, lastVal);
-    setCalHistory(inputs[0], opKey, lastVal);
+    setCalHistory(); //7+8==
   }
   if (storedOperator && !temporary) {
     const lastInput = inputs[inputs.length - 1];
@@ -217,23 +250,24 @@ equalKey.addEventListener('click', function () {
     total = doTheMath(storedOperator, lastInput, lastInput);
     opKey = storedOperator;
     lastVal = lastInput;
-    setCalHistory(lastVal, opKey, lastVal);
+    setCalHistory(); // 7+8+= +=
   }
   if (temporary) {
     inputs.push(+temporary);
     temporary = '';
     const lastInput = inputs[inputs.length - 1];
-    if (inputs.length > 2) inputs.shift(); // if 3
+    if (inputs.length > 2) inputs.shift();
     if (inputs.length < 2) {
-      // if 1
       total = lastInput;
-      setCalHistory();
+      storedOperator = '';
+      setCalHistory(); //7=
     } else {
       lastVal = lastInput;
       opKey = storedOperator;
       total = doTheMath(storedOperator, inputs[0], inputs[1]);
       toggleOperatorFocus(storedOperator);
-      setCalHistory(inputs[0], opKey, lastVal);
+      storedOperator = '';
+      setCalHistory(); //7+8=
     }
   }
 
@@ -244,8 +278,17 @@ equalKey.addEventListener('click', function () {
 });
 
 decimalKey.addEventListener('click', function (e) {
+  opKey = '';
+  lastVal = '';
+
   if (!temporary) {
     temporary = '0.';
+    if (!storedOperator) {
+      inputs = [];
+      total = 0;
+      setCalHistory(); //2+3=.
+    }
+    if (inputs.length) setCalHistory(); //.2+. .2+.3-.
   } else if (!temporary.includes('.')) {
     temporary += e.target.textContent;
   }
