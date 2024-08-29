@@ -135,8 +135,8 @@ function doTheMath(operator, val1, val2) {
 function handleDigitClick(e) {
   opKey = '';
   lastVal = '';
- 
-    if (!temporary && storedOperator) setCalHistory(); //7+8-5 7+8
+
+  if (!temporary && storedOperator) setCalHistory(); //7+8-5 7+8
 
   temporary += e.target.textContent;
   if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
@@ -155,15 +155,10 @@ function handleOperatorClick(e) {
   lastVal = '';
   if (!temporary) {
     toggleOperatorFocus(currentOperator);
-    if (inputs.length > 1) {
+    if (inputs.length >= 1) {
       toggleOperatorFocus(storedOperator);
       storedOperator = currentOperator;
-      setCalHistory(); // 7+8-+
-    }
-    if (inputs.length == 1) {
-      toggleOperatorFocus(storedOperator);
-      storedOperator = currentOperator;
-      setCalHistory(); // 7=+- 7+-
+      setCalHistory(); // 7+8-+ // 7=+- 7+-
     }
     if (!inputs.length) {
       temporary = '0';
@@ -173,7 +168,6 @@ function handleOperatorClick(e) {
       temporary = '';
     }
   }
-
   if (temporary) {
     if (temporary !== '0') {
       if (temporary == '0.') temporary = '0';
@@ -185,11 +179,9 @@ function handleOperatorClick(e) {
           toggleOperatorFocus(currentOperator);
           toggleOperatorFocus(storedOperator);
         }
-
         total = doTheMath(storedOperator, inputs[0], inputs[1]);
         setCurrentDisplay(total);
         inputs = [inputs[1], total];
-
         storedOperator = currentOperator;
       }
       if (!storedOperator) {
@@ -205,24 +197,21 @@ function handleOperatorClick(e) {
       toggleOperatorFocus(currentOperator);
       toggleOperatorFocus(storedOperator);
       storedOperator = currentOperator;
-      if(inputs.length){
+      if (inputs.length) {
         temporary = '';
         setCalHistory(); //7+8-5D+
       }
-     if(!inputs.length){
+      if (!inputs.length) {
         setCalHistory(); //0+
-        inputs.push(+temporary)
+        inputs.push(+temporary);
         temporary = '';
-     }
+      }
     }
   }
   setClearDisplay();
 }
 
-clearKey.addEventListener('click', function (e) {
-  clearKey.textContent == 'AC' ? allClear() : clearUnit();
-});
-deleteKey.addEventListener('click', function (e) {
+function handleDelete(e) {
   if (opKey) allClear();
   if (temporary) {
     if (temporary.length == 1) {
@@ -257,18 +246,14 @@ deleteKey.addEventListener('click', function (e) {
     }
   }
   setClearDisplay();
-});
+}
 
-digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
-
-operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
-
-equalKey.addEventListener('click', function () {
+function handleEqual(e) {
   if (opKey && lastVal.toString().length) {
     total = doTheMath(opKey, total, lastVal);
     setCalHistory(); //7+8==
   }
-  if (storedOperator && !temporary) {
+  if (!temporary && storedOperator) {
     const lastInput = inputs[inputs.length - 1];
     toggleOperatorFocus(storedOperator);
     total = doTheMath(storedOperator, lastInput, lastInput);
@@ -282,11 +267,12 @@ equalKey.addEventListener('click', function () {
     temporary = '';
     const lastInput = inputs[inputs.length - 1];
     if (inputs.length > 2) inputs.shift();
-    if (inputs.length < 2) {
+    if (inputs.length == 1) {
       total = lastInput;
       storedOperator = '';
       setCalHistory(); //7=
-    } else {
+    }
+    if (inputs.length == 2) {
       lastVal = lastInput;
       opKey = storedOperator;
       total = doTheMath(storedOperator, inputs[0], inputs[1]);
@@ -298,9 +284,9 @@ equalKey.addEventListener('click', function () {
   inputs = [total];
   setCurrentDisplay(total);
   setClearDisplay();
-});
+}
 
-decimalKey.addEventListener('click', function (e) {
+function handleDecimal(e) {
   opKey = '';
   lastVal = '';
   if (!temporary) {
@@ -316,10 +302,26 @@ decimalKey.addEventListener('click', function (e) {
   }
   setCurrentDisplay(temporary);
   setClearDisplay();
+}
+
+clearKey.addEventListener('click', function (e) {
+  clearKey.textContent == 'AC' ? allClear() : clearUnit();
 });
+deleteKey.addEventListener('click', handleDelete);
+digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
+operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
+equalKey.addEventListener('click', handleEqual);
+decimalKey.addEventListener('click', handleDecimal);
 
 positiveMinusKey.addEventListener('click', function (e) {
-  temporary = -+temporary;
+  const lastInput = inputs[inputs.length - 1];
+  if (temporary == '0' || !temporary) {
+    temporary = '-0'; //0M M
+    if (lastInput) temporary = (-+lastInput).toString(); //7+M
+  } else {
+    temporary = (-+temporary).toString(); //7M
+  }
+  setCalHistory();
   setCurrentDisplay(temporary);
   setClearDisplay();
 });
