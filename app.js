@@ -4,7 +4,6 @@ console.log('hi');
 //percentage key
 //show comma when digits hit 4 (%3 == 1)
 //show custom error message when user try to divide number by 0
-//set calHistory logic
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -77,6 +76,8 @@ function setCalHistory() {
   if (lastVal.toString().length) {
     if (storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${opKey} ${lastVal}`; //7+8+= +=
     if (!storedOperator) calHistory.textContent = `${inputs[0]} ${opKey} ${lastVal}`; //7+8= 7+8==
+  } else if (!inputs.length && temporary) {
+    calHistory.textContent = `${temporary} ${storedOperator}`; //7+ + 0+
   } else if (inputs.length && temporary) {
     if (inputs.length == 1 && temporary.startsWith('0.')) {
       if (temporary.length > 2) calHistory.textContent = `${inputs[0]} ${storedOperator} ${temporary}`; //.2+.3-
@@ -94,7 +95,7 @@ function setCalHistory() {
     if (inputs.length == 2 && !storedOperator) return; // 7+8-D
     if (inputs.length == 2 && storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; //7+8-5 7+8-5D+ 7+8-+
   } else {
-    calHistory.textContent = ''; //7+8=9 2+3=.
+    calHistory.textContent = ''; //initialize
   }
 }
 
@@ -134,7 +135,9 @@ function doTheMath(operator, val1, val2) {
 function handleDigitClick(e) {
   opKey = '';
   lastVal = '';
-  if (!temporary && storedOperator) setCalHistory(); //7+8-5 //7+8
+ 
+    if (!temporary && storedOperator) setCalHistory(); //7+8-5 7+8
+
   temporary += e.target.textContent;
   if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
@@ -162,23 +165,39 @@ function handleOperatorClick(e) {
       storedOperator = currentOperator;
       setCalHistory(); // 7=+- 7+-
     }
-    if (!inputs.length) inputs.push(0); // +
+    if (!inputs.length) {
+      temporary = '0';
+      storedOperator = currentOperator;
+      setCalHistory(); //+
+      inputs.push(+temporary);
+      temporary = '';
+    }
   }
 
   if (temporary) {
     if (temporary !== '0') {
-      if ((temporary == '0.')) temporary = '0';
-      setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
-      inputs.push(+temporary);
-      if (inputs.length > 2) inputs.shift(); //remove the first one
-      if (!storedOperator || storedOperator !== currentOperator) {
-        toggleOperatorFocus(currentOperator);
-        toggleOperatorFocus(storedOperator);
-      }
+      if (temporary == '0.') temporary = '0';
       if (storedOperator) {
+        setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
+        inputs.push(+temporary);
+        if (inputs.length > 2) inputs.shift(); //remove the first one
+        if (storedOperator !== currentOperator) {
+          toggleOperatorFocus(currentOperator);
+          toggleOperatorFocus(storedOperator);
+        }
+
         total = doTheMath(storedOperator, inputs[0], inputs[1]);
         setCurrentDisplay(total);
         inputs = [inputs[1], total];
+
+        storedOperator = currentOperator;
+      }
+      if (!storedOperator) {
+        toggleOperatorFocus(currentOperator);
+        toggleOperatorFocus(storedOperator);
+        storedOperator = currentOperator;
+        setCalHistory(); // 7 +
+        inputs.push(+temporary);
       }
       temporary = '';
     }
@@ -186,12 +205,17 @@ function handleOperatorClick(e) {
       toggleOperatorFocus(currentOperator);
       toggleOperatorFocus(storedOperator);
       storedOperator = currentOperator;
-      temporary = '';
-      setCalHistory(); //7+8-5D+
+      if(inputs.length){
+        temporary = '';
+        setCalHistory(); //7+8-5D+
+      }
+     if(!inputs.length){
+        setCalHistory(); //0+
+        inputs.push(+temporary)
+        temporary = '';
+     }
     }
   }
-
-  storedOperator = currentOperator;
   setClearDisplay();
 }
 
@@ -251,6 +275,7 @@ equalKey.addEventListener('click', function () {
     opKey = storedOperator;
     lastVal = lastInput;
     setCalHistory(); // 7+8+= +=
+    storedOperator = '';
   }
   if (temporary) {
     inputs.push(+temporary);
@@ -270,17 +295,14 @@ equalKey.addEventListener('click', function () {
       setCalHistory(); //7+8=
     }
   }
-
   inputs = [total];
   setCurrentDisplay(total);
-  storedOperator = '';
   setClearDisplay();
 });
 
 decimalKey.addEventListener('click', function (e) {
   opKey = '';
   lastVal = '';
-
   if (!temporary) {
     temporary = '0.';
     if (!storedOperator) {
@@ -292,6 +314,12 @@ decimalKey.addEventListener('click', function (e) {
   } else if (!temporary.includes('.')) {
     temporary += e.target.textContent;
   }
+  setCurrentDisplay(temporary);
+  setClearDisplay();
+});
+
+positiveMinusKey.addEventListener('click', function (e) {
+  temporary = -+temporary;
   setCurrentDisplay(temporary);
   setClearDisplay();
 });
