@@ -79,10 +79,10 @@ function setCalHistory() {
   } else if (!inputs.length && temporary) {
     calHistory.textContent = `${temporary} ${storedOperator}`; //7+ + 0+
   } else if (inputs.length && temporary) {
-    calHistory.textContent = `${inputs[0]} ${storedOperator}`; //.2+.
+    calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; //.2+. 7+8-M
   } else if (inputs.length && !temporary) {
-    if(!storedOperator) calHistory.textContent = `${inputs[inputs.length-1]}`; // 7=+D 7+8-D
-    if(storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; // 7+8 7+8-5 7+8-5D+ 7+8-+ 7+8- 7+8-5+ .2+.3-. .2+.3-.4+
+    if (!storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]}`; // 7=+D 7+8-D
+    if (storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; // 7+8 7+8-5 7+8-5D+ 7+8-+ 7+8- 7+8-5+ .2+.3-. .2+.3-.4+
   } else {
     calHistory.textContent = ''; //initialize
   }
@@ -120,15 +120,24 @@ function doTheMath(operator, val1, val2) {
   return parseFloat(result.toFixed(10));
 }
 
+function modTemporary(e) {
+  if (temporary.startsWith('-') && temporary.length > 2 && temporary.at(1) == '0') {
+    if (!temporary.includes('.')) temporary = `-${temporary.slice(2)}`; //-08
+    if (temporary.includes('.')) return; //-0.8
+  } else if (!temporary.startsWith('-') && temporary.length > 1 && temporary.at(0) == '0') {
+    if (!temporary.includes('.')) temporary = temporary.slice(1); //08
+    if (temporary.includes('.')) return; //0.8
+  }
+}
+
 //handle Click
 function handleDigitClick(e) {
   opKey = '';
   lastVal = '';
-
   if (!temporary && storedOperator) setCalHistory(); //7+8-5 7+8
-
   temporary += e.target.textContent;
-  if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
+  modTemporary(e);
+  //   if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
   if (!storedOperator) {
     inputs = []; //start clean
@@ -204,14 +213,16 @@ function handleOperatorClick(e) {
 function handleDelete(e) {
   if (opKey) allClear();
   if (temporary) {
-    if (temporary.length == 1) {
-      setCurrentDisplay(0);
-      temporary = '0';
-      if (!inputs.length) allClear();
+    if ((!temporary.startsWith('-') && temporary.length == 1) || 
+    (temporary.startsWith('-') && temporary.length == 2)) {
+        temporary = '0';
+        setCurrentDisplay(temporary); //8D -8D
+        if (!inputs.length) allClear();
     }
-    if (temporary.length > 1) {
-      temporary = temporary.slice(0, -1);
-      setCurrentDisplay(temporary);
+    if ((!temporary.startsWith('-') && temporary.length > 1) || 
+    (temporary.startsWith('-') && temporary.length > 2)) {
+        temporary = temporary.slice(0, -1);
+        setCurrentDisplay(temporary);
     }
   }
   if (!temporary) {
@@ -280,7 +291,7 @@ function handleDecimal(e) {
   opKey = '';
   lastVal = '';
   if (!temporary) {
-    temporary = '0.';
+    temporary = '0.'; //.
     if (!storedOperator) {
       inputs = [];
       total = 0;
@@ -307,7 +318,7 @@ positiveMinusKey.addEventListener('click', function (e) {
   const lastInput = inputs[inputs.length - 1];
   if (temporary == '0' || !temporary) {
     temporary = '-0'; //0M M
-    if (lastInput) temporary = (-+lastInput).toString(); //7+M
+    if (lastInput) temporary = (-+lastInput).toString(); //7+M 7+8-M
   } else {
     temporary = (-+temporary).toString(); //7M
   }
