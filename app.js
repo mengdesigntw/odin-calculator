@@ -79,21 +79,10 @@ function setCalHistory() {
   } else if (!inputs.length && temporary) {
     calHistory.textContent = `${temporary} ${storedOperator}`; //7+ + 0+
   } else if (inputs.length && temporary) {
-    if (inputs.length == 1 && temporary.startsWith('0.')) {
-      if (temporary.length > 2) calHistory.textContent = `${inputs[0]} ${storedOperator} ${temporary}`; //.2+.3-
-      if (temporary.length <= 2) calHistory.textContent = `${inputs[0]} ${storedOperator}`; //.2+.
-    }
-    if (inputs.length == 1 && !temporary.startsWith('0.')) calHistory.textContent = `${inputs[0]} ${storedOperator} ${temporary}`; //7+8-
-    if (inputs.length == 2 && temporary.startsWith('0.')) {
-      if (temporary.length > 2) calHistory.textContent = `${inputs[1]} ${storedOperator} ${temporary}`; //.2+.3-.4+
-      if (temporary.length <= 2) calHistory.textContent = `${inputs[1]} ${storedOperator}`; // .2+.3-.
-    }
-    if (inputs.length == 2 && !temporary.startsWith('0.')) calHistory.textContent = `${inputs[1]} ${storedOperator} ${temporary}`; //7+8-5+
+    calHistory.textContent = `${inputs[0]} ${storedOperator}`; //.2+.
   } else if (inputs.length && !temporary) {
-    if (inputs.length == 1 && storedOperator) calHistory.textContent = `${inputs[0]} ${storedOperator}`; //7+8
-    if (inputs.length == 1 && !storedOperator) calHistory.textContent = ''; // 7=+D
-    if (inputs.length == 2 && !storedOperator) return; // 7+8-D
-    if (inputs.length == 2 && storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; //7+8-5 7+8-5D+ 7+8-+
+    if(!storedOperator) calHistory.textContent = `${inputs[inputs.length-1]}`; // 7=+D 7+8-D
+    if(storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; // 7+8 7+8-5 7+8-5D+ 7+8-+ 7+8- 7+8-5+ .2+.3-. .2+.3-.4+
   } else {
     calHistory.textContent = ''; //initialize
   }
@@ -172,7 +161,6 @@ function handleOperatorClick(e) {
     if (temporary !== '0') {
       if (temporary == '0.') temporary = '0';
       if (storedOperator) {
-        setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
         inputs.push(+temporary);
         if (inputs.length > 2) inputs.shift(); //remove the first one
         if (storedOperator !== currentOperator) {
@@ -183,6 +171,8 @@ function handleOperatorClick(e) {
         setCurrentDisplay(total);
         inputs = [inputs[1], total];
         storedOperator = currentOperator;
+        temporary = '';
+        setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
       }
       if (!storedOperator) {
         toggleOperatorFocus(currentOperator);
@@ -190,8 +180,8 @@ function handleOperatorClick(e) {
         storedOperator = currentOperator;
         setCalHistory(); // 7 +
         inputs.push(+temporary);
+        temporary = '';
       }
-      temporary = '';
     }
     if (temporary == '0') {
       toggleOperatorFocus(currentOperator);
