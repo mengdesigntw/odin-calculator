@@ -134,10 +134,9 @@ function modTemporary(e) {
 function handleDigitClick(e) {
   opKey = '';
   lastVal = '';
-  if (!temporary && storedOperator) setCalHistory(); //7+8-5 7+8
+  if (storedOperator) setCalHistory(); //7+8-5 7+8
   temporary += e.target.textContent;
   modTemporary(e);
-  //   if (temporary.length > 1 && temporary.at(0) == 0 && !temporary.includes('.')) temporary = temporary.slice(1);
   setCurrentDisplay(temporary);
   if (!storedOperator) {
     inputs = []; //start clean
@@ -222,30 +221,29 @@ function handleDelete(e) {
     if ((!temporary.startsWith('-') && temporary.length > 1) || 
     (temporary.startsWith('-') && temporary.length > 2)) {
         temporary = temporary.slice(0, -1);
-        setCurrentDisplay(temporary);
+        setCurrentDisplay(temporary); //89D -89D
     }
   }
   if (!temporary) {
-    if (!storedOperator && inputs.length) {
+    if (!storedOperator && inputs.length) { 
       const lastInput = inputs[inputs.length - 1].toString(); // '7'
       if (lastInput.length == 1) {
         setCurrentDisplay(0);
-        if (inputs.length == 1) allClear();
+        allClear(); //2+3=+DD 2+3-4+DD
       }
       if (lastInput.length > 1) {
         temporary = lastInput.slice(0, -1);
-        setCurrentDisplay(temporary);
-        if (inputs.length == 2) allClear();
+        setCurrentDisplay(temporary); //7+89=+DD 7+8-DD
       }
       inputs = [];
       total = 0;
     }
     if (storedOperator) {
       toggleOperatorFocus(storedOperator);
-      storedOperator = '';
-      setCalHistory(); //7=+D 7+8-D
+      storedOperator = ''; //7=+D 7+8-D
     }
   }
+  setCalHistory();
   setClearDisplay();
 }
 
