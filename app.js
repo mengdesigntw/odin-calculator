@@ -1,7 +1,6 @@
 console.log('hi');
 //List to do:
 //percentage key
-//modDisplay logic for minus diplay.
 //show custom error message when user try to divide number by 0
 //display container overflow
 
@@ -71,22 +70,28 @@ function clearUnit() {
 function setCurrentDisplay() {
   let currentDisplay;
   temporary ? (currentDisplay = temporary) : total ? (currentDisplay = total) : (currentDisplay = '0');
-  currentValue.textContent = currentDisplay
+  currentValue.textContent = currentDisplay;
   if (currentValue.textContent.startsWith('0.')) return;
-  modDisplay(currentDisplay.toString());
+  currentValue.textContent = modDisplay(currentDisplay.toString());
 }
 
 function setCalHistory() {
+const modLastVal = modDisplay(lastVal.toString())
+const modInputs = inputs.map((val)=>{
+    return modDisplay(val.toString())
+}) 
+const modTemp = modDisplay(temporary) 
+
   if (lastVal.toString().length) {
-    if (storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${opKey} ${lastVal}`; //7+8+= +=
-    if (!storedOperator) calHistory.textContent = `${inputs[0]} ${opKey} ${lastVal}`; //7+8= 7+8==
+    if (storedOperator) calHistory.textContent = `${modInputs[modInputs.length - 1]} ${opKey} ${modLastVal}`; //7+8+= +=
+    if (!storedOperator) calHistory.textContent = `${modInputs[0]} ${opKey} ${modLastVal}`; //7+8= 7+8==
   } else if (!inputs.length && temporary) {
-    calHistory.textContent = `${temporary} ${storedOperator}`; //7+ + 0+
+    calHistory.textContent = `${modTemp} ${storedOperator}`; //7+ + 0+
   } else if (inputs.length && temporary) {
-    calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; //.2+. 7+8-M
+    calHistory.textContent = `${modInputs[modInputs.length - 1]} ${storedOperator}`; //.2+. 7+8-M
   } else if (inputs.length && !temporary) {
-    if (!storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]}`; // 7=+D 7+8-D
-    if (storedOperator) calHistory.textContent = `${inputs[inputs.length - 1]} ${storedOperator}`; // 7+8 7+8-5 7+8-5D+ 7+8-+ 7+8- 7+8-5+ .2+.3-. .2+.3-.4+
+    if (!storedOperator) calHistory.textContent = `${modInputs[modInputs.length - 1]}`; // 7=+D 7+8-D
+    if (storedOperator) calHistory.textContent = `${modInputs[modInputs.length - 1]} ${storedOperator}`; // 7+8 7+8-5 7+8-5D+ 7+8-+ 7+8- 7+8-5+ .2+.3-. .2+.3-.4+
   } else {
     calHistory.textContent = ''; //initialize
   }
@@ -164,18 +169,31 @@ function modInteger(str) {
     }
     return arr.toString();
   }
-  return str
+  return str;
 }
 
 function modDisplay(str) {
-  const currentDisplay = str;
-  if (currentDisplay.includes('.')) {
-    const idx = currentDisplay.indexOf('.');
-    const integerStr = currentDisplay.slice(0, idx);
-    const decimalStr = currentDisplay.slice(idx, currentDisplay.length);
-    currentValue.textContent = modInteger(integerStr).concat(decimalStr);
-  } else {
-    currentValue.textContent = modInteger(str);
+  let currentDisplay = str;
+  if (!currentDisplay.startsWith('-')) {
+    if (currentDisplay.includes('.')) {
+      const idx = currentDisplay.indexOf('.');
+      const integerStr = currentDisplay.slice(0, idx);
+      const decimalStr = currentDisplay.slice(idx, currentDisplay.length);
+      return modInteger(integerStr).concat(decimalStr);
+    } else {
+      return modInteger(currentDisplay);
+    }
+  }
+  if (currentDisplay.startsWith('-')) { //-1234
+    currentDisplay = currentDisplay.slice(1); //remove '-'
+    if (currentDisplay.includes('.')) {
+      const idx = currentDisplay.indexOf('.');
+      const integerStr = currentDisplay.slice(0, idx);
+      const decimalStr = currentDisplay.slice(idx, currentDisplay.length);
+      return `-${modInteger(integerStr).concat(decimalStr)}`;
+    } else {
+      return `-${modInteger(currentDisplay)}`;
+    }
   }
 }
 
