@@ -1,6 +1,5 @@
 console.log('hi');
 //List to do:
-//debug modifier & decimal key
 //percentage key
 //show comma when digits hit 4 (%3 == 1)
 //show custom error message when user try to divide number by 0
@@ -34,7 +33,7 @@ let total = 0;
 let opKey = '';
 let lastVal = '';
 
-setCurrentDisplay(0);
+setCurrentDisplay();
 setCalHistory(); //initialize
 
 //clear function
@@ -46,14 +45,13 @@ function allClear() {
   total = 0;
   opKey = '';
   lastVal = '';
-  setCurrentDisplay(0);
+  setCurrentDisplay();
   setCalHistory();
   setClearDisplay();
 }
 
 function clearUnit() {
   if (temporary) {
-    setCurrentDisplay(0);
     temporary = '0';
     if (!inputs.length) allClear();
   }
@@ -65,12 +63,13 @@ function clearUnit() {
       setCalHistory(); //7=+C
     }
   }
+  setCurrentDisplay();
   setClearDisplay();
 }
 
 //setting Display function
-function setCurrentDisplay(val) {
-  currentValue.textContent = val;
+function setCurrentDisplay() {
+  temporary ? (currentValue.textContent = temporary) : total ? (currentValue.textContent = total) : (currentValue.textContent = 0);
 }
 
 function setCalHistory() {
@@ -138,12 +137,12 @@ function handleDigitClick(e) {
   if (storedOperator) setCalHistory(); //7+8-5 7+8
   temporary += e.target.textContent;
   modTemporary(e);
-  setCurrentDisplay(temporary);
   if (!storedOperator) {
     inputs = []; //start clean
     total = 0;
     setCalHistory(); //7+8=9
   }
+  setCurrentDisplay();
   setClearDisplay();
 }
 
@@ -177,10 +176,10 @@ function handleOperatorClick(e) {
           toggleOperatorFocus(storedOperator);
         }
         total = doTheMath(storedOperator, inputs[0], inputs[1]);
-        setCurrentDisplay(total);
         inputs = [inputs[1], total];
         storedOperator = currentOperator;
         temporary = '';
+        setCurrentDisplay();
         setCalHistory(); //7+8- 7+8-5+ .2+.3- .2+.3-.4+
       }
       if (!storedOperator) {
@@ -214,26 +213,18 @@ function handleDelete(e) {
   if (opKey) allClear();
   if (temporary) {
     if ((!temporary.startsWith('-') && temporary.length == 1) || (temporary.startsWith('-') && temporary.length == 2)) {
-      temporary = '0';
-      setCurrentDisplay(temporary); //8D -8D
+      temporary = '0'; //8D (-8)D
       if (!inputs.length) allClear();
     }
     if ((!temporary.startsWith('-') && temporary.length > 1) || (temporary.startsWith('-') && temporary.length > 2)) {
-      temporary = temporary.slice(0, -1);
-      setCurrentDisplay(temporary); //89D -89D
+      temporary = temporary.slice(0, -1); //89D (-89)D
     }
   }
   if (!temporary) {
     if (!storedOperator && inputs.length) {
       const lastInput = inputs[inputs.length - 1].toString(); // '7'
-      if (lastInput.length == 1) {
-        setCurrentDisplay(0);
-        allClear(); //2+3=+DD 2+3-4+DD
-      }
-      if (lastInput.length > 1) {
-        temporary = lastInput.slice(0, -1);
-        setCurrentDisplay(temporary); //7+89=+DD 7+8-DD
-      }
+      if (lastInput.length == 1) allClear(); //2+3=+DD 2+3-4+DD
+      if (lastInput.length > 1) temporary = lastInput.slice(0, -1); //7+89=+DD 7+8-DD
       inputs = [];
       total = 0;
     }
@@ -242,6 +233,7 @@ function handleDelete(e) {
       storedOperator = ''; //7=+D 7+8-D
     }
   }
+  setCurrentDisplay();
   setCalHistory();
   setClearDisplay();
 }
@@ -280,7 +272,7 @@ function handleEqual(e) {
     }
   }
   inputs = [total];
-  setCurrentDisplay(total);
+  setCurrentDisplay();
   setClearDisplay();
 }
 
@@ -296,25 +288,25 @@ function handleDecimal(e) {
   } else if (!temporary.includes('.')) {
     temporary += e.target.textContent; //M.
   }
-  setCalHistory()
-  setCurrentDisplay(temporary);
+  setCalHistory();
+  setCurrentDisplay();
   setClearDisplay();
 }
 
-function handlePositiveMinus(){
-    const lastInput = inputs[inputs.length - 1];
-    if ((!temporary || temporary == '0') && !lastInput) {
-      temporary = '-0'; //M 0M
-    } else if (!temporary && lastInput) {
-      temporary = (-+lastInput).toString(); //7+M 7+8-M
-    } else if (temporary == '0' && lastInput) {
-      temporary = '-0'// 7+8DM
-    }else {
-      temporary = (-+temporary).toString(); //7M 7+89DM 
-    }
-    setCalHistory();
-    setCurrentDisplay(temporary);
-    setClearDisplay();
+function handlePositiveMinus() {
+  const lastInput = inputs[inputs.length - 1];
+  if ((!temporary || temporary == '0') && !lastInput) {
+    temporary = '-0'; //M 0M
+  } else if (!temporary && lastInput) {
+    temporary = (-+lastInput).toString(); //7+M 7+8-M
+  } else if (temporary == '0' && lastInput) {
+    temporary = '-0'; // 7+8DM
+  } else {
+    temporary = (-+temporary).toString(); //7M 7+89DM
+  }
+  setCalHistory();
+  setCurrentDisplay();
+  setClearDisplay();
 }
 
 clearKey.addEventListener('click', function (e) {
