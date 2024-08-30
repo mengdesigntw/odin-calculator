@@ -1,9 +1,10 @@
 console.log('hi');
 //List to do:
-//modifier key
+//debug modifier & decimal key
 //percentage key
 //show comma when digits hit 4 (%3 == 1)
 //show custom error message when user try to divide number by 0
+//display container overflow
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -212,20 +213,18 @@ function handleOperatorClick(e) {
 function handleDelete(e) {
   if (opKey) allClear();
   if (temporary) {
-    if ((!temporary.startsWith('-') && temporary.length == 1) || 
-    (temporary.startsWith('-') && temporary.length == 2)) {
-        temporary = '0';
-        setCurrentDisplay(temporary); //8D -8D
-        if (!inputs.length) allClear();
+    if ((!temporary.startsWith('-') && temporary.length == 1) || (temporary.startsWith('-') && temporary.length == 2)) {
+      temporary = '0';
+      setCurrentDisplay(temporary); //8D -8D
+      if (!inputs.length) allClear();
     }
-    if ((!temporary.startsWith('-') && temporary.length > 1) || 
-    (temporary.startsWith('-') && temporary.length > 2)) {
-        temporary = temporary.slice(0, -1);
-        setCurrentDisplay(temporary); //89D -89D
+    if ((!temporary.startsWith('-') && temporary.length > 1) || (temporary.startsWith('-') && temporary.length > 2)) {
+      temporary = temporary.slice(0, -1);
+      setCurrentDisplay(temporary); //89D -89D
     }
   }
   if (!temporary) {
-    if (!storedOperator && inputs.length) { 
+    if (!storedOperator && inputs.length) {
       const lastInput = inputs[inputs.length - 1].toString(); // '7'
       if (lastInput.length == 1) {
         setCurrentDisplay(0);
@@ -289,18 +288,33 @@ function handleDecimal(e) {
   opKey = '';
   lastVal = '';
   if (!temporary) {
-    temporary = '0.'; //.
+    temporary = '0.'; //. .2+. .2+.3-.
     if (!storedOperator) {
       inputs = [];
-      total = 0;
-      setCalHistory(); //2+3=.
+      total = 0; // 2+3=.
     }
-    if (inputs.length) setCalHistory(); //.2+. .2+.3-.
   } else if (!temporary.includes('.')) {
-    temporary += e.target.textContent;
+    temporary += e.target.textContent; //M.
   }
+  setCalHistory()
   setCurrentDisplay(temporary);
   setClearDisplay();
+}
+
+function handlePositiveMinus(){
+    const lastInput = inputs[inputs.length - 1];
+    if ((!temporary || temporary == '0') && !lastInput) {
+      temporary = '-0'; //M 0M
+    } else if (!temporary && lastInput) {
+      temporary = (-+lastInput).toString(); //7+M 7+8-M
+    } else if (temporary == '0' && lastInput) {
+      temporary = '-0'// 7+8DM
+    }else {
+      temporary = (-+temporary).toString(); //7M 7+89DM 
+    }
+    setCalHistory();
+    setCurrentDisplay(temporary);
+    setClearDisplay();
 }
 
 clearKey.addEventListener('click', function (e) {
@@ -311,16 +325,4 @@ digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
 operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
 equalKey.addEventListener('click', handleEqual);
 decimalKey.addEventListener('click', handleDecimal);
-
-positiveMinusKey.addEventListener('click', function (e) {
-  const lastInput = inputs[inputs.length - 1];
-  if (temporary == '0' || !temporary) {
-    temporary = '-0'; //0M M
-    if (lastInput) temporary = (-+lastInput).toString(); //7+M 7+8-M
-  } else {
-    temporary = (-+temporary).toString(); //7M
-  }
-  setCalHistory();
-  setCurrentDisplay(temporary);
-  setClearDisplay();
-});
+positiveMinusKey.addEventListener('click', handlePositiveMinus);
