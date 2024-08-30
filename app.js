@@ -1,15 +1,16 @@
 console.log('hi');
 //List to do:
-//percentage key
 //show custom error message when user try to divide number by 0
 //display container overflow
+//escape scientific notation
+//debug 7+8=M 7-=P.
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
 const calHistory = document.querySelector('.history');
 const clearKey = document.querySelector('#clear');
 const positiveMinusKey = document.querySelector('#positive-minus');
-const getPercentageKey = document.querySelector('#percentage');
+const percentageKey = document.querySelector('#percentage');
 const divideKey = document.querySelector('#divide');
 const multiplyKey = document.querySelector('#multiply');
 const minusKey = document.querySelector('#minus');
@@ -76,11 +77,11 @@ function setCurrentDisplay() {
 }
 
 function setCalHistory() {
-const modLastVal = modDisplay(lastVal.toString())
-const modInputs = inputs.map((val)=>{
-    return modDisplay(val.toString())
-}) 
-const modTemp = modDisplay(temporary) 
+  const modLastVal = modDisplay(lastVal.toString());
+  const modInputs = inputs.map((val) => {
+    return modDisplay(val.toString());
+  });
+  const modTemp = modDisplay(temporary);
 
   if (lastVal.toString().length) {
     if (storedOperator) calHistory.textContent = `${modInputs[modInputs.length - 1]} ${opKey} ${modLastVal}`; //7+8+= +=
@@ -184,7 +185,8 @@ function modDisplay(str) {
       return modInteger(currentDisplay);
     }
   }
-  if (currentDisplay.startsWith('-')) { //-1234
+  if (currentDisplay.startsWith('-')) {
+    //-1234
     currentDisplay = currentDisplay.slice(1); //remove '-'
     if (currentDisplay.includes('.')) {
       const idx = currentDisplay.indexOf('.');
@@ -376,6 +378,26 @@ function handlePositiveMinus() {
   setClearDisplay();
 }
 
+function handlePercentage(e) {
+  const lastInput = inputs[inputs.length - 1];
+  if (lastVal.toString().length) {
+    temporary = `${lastInput / 100}`;
+    total=0
+    opKey=''
+    lastVal=''
+    inputs = [temporary]
+  } else if (!inputs.length) {
+    temporary = `${+temporary / 100}`;
+  } else if (inputs.length && temporary) {
+    temporary = `${(lastInput * temporary) / 100}`;
+  } else if (inputs.length && !temporary) {
+    temporary = `${(lastInput * lastInput) / 100}`;
+  }
+  setCalHistory();
+  setCurrentDisplay();
+  setClearDisplay();
+}
+
 clearKey.addEventListener('click', function (e) {
   clearKey.textContent == 'AC' ? allClear() : clearUnit();
 });
@@ -385,3 +407,4 @@ operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick
 equalKey.addEventListener('click', handleEqual);
 decimalKey.addEventListener('click', handleDecimal);
 positiveMinusKey.addEventListener('click', handlePositiveMinus);
+percentageKey.addEventListener('click', handlePercentage);
