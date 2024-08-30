@@ -1,7 +1,7 @@
 console.log('hi');
 //List to do:
 //percentage key
-//show comma when digits hit 4 (%3 == 1)
+//modDisplay logic for minus diplay.
 //show custom error message when user try to divide number by 0
 //display container overflow
 
@@ -69,7 +69,11 @@ function clearUnit() {
 
 //setting Display function
 function setCurrentDisplay() {
-  temporary ? (currentValue.textContent = temporary) : total ? (currentValue.textContent = total) : (currentValue.textContent = 0);
+  let currentDisplay;
+  temporary ? (currentDisplay = temporary) : total ? (currentDisplay = total) : (currentDisplay = '0');
+  currentValue.textContent = currentDisplay
+  if (currentValue.textContent.startsWith('0.')) return;
+  modDisplay(currentDisplay.toString());
 }
 
 function setCalHistory() {
@@ -127,6 +131,51 @@ function modTemporary(e) {
   } else if (!temporary.startsWith('-') && temporary.length > 1 && temporary.at(0) == '0') {
     if (!temporary.includes('.')) temporary = temporary.slice(1); //08
     if (temporary.includes('.')) return; //0.8
+  }
+}
+
+function modInteger(str) {
+  const integerStr = str;
+  let arr = [];
+  if (integerStr.length > 3) {
+    if (integerStr.length % 3 !== 0) {
+      if (integerStr.length % 3 == 1) arr.push(integerStr.slice(0, 1));
+      if (integerStr.length % 3 == 2) arr.push(integerStr.slice(0, 2));
+      for (i = -1; i >= -integerStr.length; i--) {
+        if (i == -3) {
+          const seg = integerStr.slice(i);
+          arr.splice(1, 0, seg);
+        } else if (i % 3 == 0) {
+          const seg = integerStr.slice(i, i + 3);
+          arr.splice(1, 0, seg);
+        }
+      }
+    }
+    if (integerStr.length % 3 == 0) {
+      for (i = -1; i >= -integerStr.length; i--) {
+        if (i == -3) {
+          const seg = integerStr.slice(i);
+          arr.unshift(seg);
+        } else if (i % 3 == 0) {
+          const seg = integerStr.slice(i, i + 3);
+          arr.unshift(seg);
+        }
+      }
+    }
+    return arr.toString();
+  }
+  return str
+}
+
+function modDisplay(str) {
+  const currentDisplay = str;
+  if (currentDisplay.includes('.')) {
+    const idx = currentDisplay.indexOf('.');
+    const integerStr = currentDisplay.slice(0, idx);
+    const decimalStr = currentDisplay.slice(idx, currentDisplay.length);
+    currentValue.textContent = modInteger(integerStr).concat(decimalStr);
+  } else {
+    currentValue.textContent = modInteger(str);
   }
 }
 
