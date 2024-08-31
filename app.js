@@ -1,9 +1,7 @@
 console.log('hi');
 //List to do:
-//show custom error message when user try to divide number by 0
 //display container overflow
 //escape scientific notation
-//debug 7+8=M 7-=P.
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -311,38 +309,59 @@ function handleEqual(e) {
   if (opKey && lastVal.toString().length) {
     total = doTheMath(opKey, total, lastVal);
     setCalHistory(); //7+8==
+    inputs = [total];
+    setCurrentDisplay();
+    setClearDisplay();
   }
+
   if (!temporary && storedOperator) {
     const lastInput = inputs[inputs.length - 1];
-    toggleOperatorFocus(storedOperator);
-    total = doTheMath(storedOperator, lastInput, lastInput);
-    opKey = storedOperator;
-    lastVal = lastInput;
-    setCalHistory(); // 7+8+= +=
-    storedOperator = '';
+    if (!(storedOperator == '/' && lastInput == 0)) {
+      toggleOperatorFocus(storedOperator);
+      total = doTheMath(storedOperator, lastInput, lastInput);
+      opKey = storedOperator;
+      lastVal = lastInput;
+      setCalHistory(); // 7+8+= +=
+      storedOperator = '';
+      inputs = [total];
+      setCurrentDisplay();
+      setClearDisplay();
+    } else if (storedOperator == '/' && lastInput == 0) {
+      toggleOperatorFocus(storedOperator);
+      storedOperator = '';
+      allClear();
+      currentValue.textContent = 'Naughty ❤'; // 0/=
+    }
   }
+
   if (temporary) {
     inputs.push(+temporary);
     temporary = '';
     const lastInput = inputs[inputs.length - 1];
     if (inputs.length > 2) inputs.shift();
-    if (inputs.length == 1) {
-      total = lastInput;
-      storedOperator = '';
-      setCalHistory(); //7=
-    }
-    if (inputs.length == 2) {
-      lastVal = lastInput;
-      opKey = storedOperator;
-      total = doTheMath(storedOperator, inputs[0], inputs[1]);
+    if (!(storedOperator == '/' && lastInput == 0)) {
+      if (inputs.length == 1) {
+        total = lastInput;
+        storedOperator = '';
+        setCalHistory(); //7=
+      } else if (inputs.length == 2) {
+        lastVal = lastInput;
+        opKey = storedOperator;
+        total = doTheMath(storedOperator, inputs[0], inputs[1]);
+        toggleOperatorFocus(storedOperator);
+        storedOperator = '';
+        setCalHistory(); //7+8=
+      }
+      inputs = [total];
+      setCurrentDisplay();
+      setClearDisplay();
+    } else if (storedOperator == '/' && lastInput == 0) {
       toggleOperatorFocus(storedOperator);
       storedOperator = '';
-      setCalHistory(); //7+8=
+      allClear();
+      currentValue.textContent = 'Naughty ❤'; // 7/0=
     }
   }
-  inputs = [total];
-  setCurrentDisplay();
-  setClearDisplay();
 }
 
 function handleDecimal(e) {
@@ -364,7 +383,13 @@ function handleDecimal(e) {
 
 function handlePositiveMinus() {
   const lastInput = inputs[inputs.length - 1];
-  if ((!temporary || temporary == '0') && !lastInput) {
+  if (lastVal.toString().length) {
+    temporary = (-+lastInput).toString(); //7+8=M
+    inputs = [temporary];
+    opKey = '';
+    lastVal = '';
+    total = 0;
+  } else if ((!temporary || temporary == '0') && !lastInput) {
     temporary = '-0'; //M 0M
   } else if (!temporary && lastInput) {
     temporary = (-+lastInput).toString(); //7+M 7+8-M
@@ -382,10 +407,10 @@ function handlePercentage(e) {
   const lastInput = inputs[inputs.length - 1];
   if (lastVal.toString().length) {
     temporary = `${lastInput / 100}`;
-    total=0
-    opKey=''
-    lastVal=''
-    inputs = [temporary]
+    total = 0;
+    opKey = '';
+    lastVal = '';
+    inputs = [temporary];
   } else if (!inputs.length) {
     temporary = `${+temporary / 100}`;
   } else if (inputs.length && temporary) {
