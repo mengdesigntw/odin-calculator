@@ -1,7 +1,5 @@
 console.log('hi');
 //List to do:
-//display container overflow
-//escape scientific notation
 
 //create variables for nodes
 const currentValue = document.querySelector('.current');
@@ -125,7 +123,7 @@ function doTheMath(operator, val1, val2) {
   if (operator == '-') result = val1 - val2;
   if (operator == 'x') result = val1 * val2;
   if (operator == '/') result = val1 / val2;
-  return parseFloat(result.toFixed(10));
+  return parseFloat(result.toFixed(15));
 }
 
 function modTemporary(e) {
@@ -230,6 +228,7 @@ function handleOperatorClick(e) {
       setCalHistory(); //+
       inputs.push(+temporary);
       temporary = '';
+      setCurrentDisplay()
     }
   }
   if (temporary) {
