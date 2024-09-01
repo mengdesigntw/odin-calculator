@@ -36,7 +36,7 @@ body {
 }
 .display-view {
   flex: 1 1 0;
-  overflow: hidden;
+  overflow: visible;
   text-align: right;
   display: flex;
   flex-direction: column;
@@ -45,11 +45,14 @@ body {
 }
 
 .history {
+  overflow: scroll;
   opacity: 0.6;
+  white-space: nowrap;
 }
 
 .current {
   font-size: 34px;
+  overflow: hidden;
 }
 
 .inputs {
@@ -94,3 +97,4 @@ body {
 .focused {
   border: 2px solid rgba(60, 36, 5, 0.8);
 }
+
