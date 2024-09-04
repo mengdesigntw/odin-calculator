@@ -1,6 +1,5 @@
 import { plusKey, divideKey, minusKey, multiplyKey } from './globals.js';
 
-
 function toggleOperatorFocus(operator) {
   if (operator == '+') plusKey.classList.toggle('focused');
   if (operator == '-') minusKey.classList.toggle('focused');
@@ -14,7 +13,7 @@ function doTheMath(operator, val1, val2) {
   if (operator == '-') result = val1 - val2;
   if (operator == 'x') result = val1 * val2;
   if (operator == '/') result = val1 / val2;
-  return modMathResult(result);
+  return result;
 }
 
 //moddisplay
@@ -81,10 +80,29 @@ function modDisplay(str) {
   }
 }
 
-export {
-  toggleOperatorFocus,
-  doTheMath,
-  modMathResult,
-  modInteger,
-  modDisplay,
-};
+function modOpposite(str) {
+  if (!str.startsWith('-')) {
+    return `-${str}`; //0, 0., 0.0, 7, 7. ,7.7
+  } else if (str.startsWith('-')) {
+    if (!str.includes('.')) return `${-+str}`; //-0,-7
+    if (str.includes('.')) {
+      if (str.endsWith('.')) return `${-+str}.`; //-0. -7.
+      if (!str.endsWith('.')) return `${str.slice(1)}`; //-0.0, -7.7
+    }
+  }
+}
+
+//modTemporary
+function modTemporary(str) {
+  if (str.startsWith('-') && str.length > 2 && str.at(1) == '0') {
+    if (!str.includes('.')) return `-${str.slice(2)}`; //-08
+    if (str.includes('.')) return str; //-0.8
+  } else if (!str.startsWith('-') && str.length > 1 && str.at(0) == '0') {
+    if (!str.includes('.')) return str.slice(1); //08
+    if (str.includes('.')) return str; //0.8
+  } else {
+    return str;
+  }
+}
+
+export { toggleOperatorFocus, doTheMath, modMathResult, modInteger, modDisplay, modTemporary, modOpposite };

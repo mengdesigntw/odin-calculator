@@ -3,21 +3,19 @@ console.log('hi');
 //debug //2+3=+DD 2+3-4+DD
 
 import {
-  setCalHistory,
-  setCurrentDisplay,
+  updateDisplay,
   handleClear,
   handleDelete,
   handleDecimal,
-  handleDigitClick,
   handleEqual,
-  handleOperatorClick,
-  handlePositiveMinus,
   handlePercentage,
+  handleDigits,
+  handleOperator,
+  handleModifier,
 } from './modules/eventHandlers.js';
 import { pads, clearKey, decimalKey, deleteKey, digits, operators, equalKey, positiveMinusKey, percentageKey } from './modules/globals.js';
 
-setCurrentDisplay();
-setCalHistory(); //initialize
+updateDisplay()
 
 pads.forEach((pad) => {
   pad.addEventListener('mousedown', function (e) {
@@ -35,9 +33,9 @@ pads.forEach((pad) => {
 });
 clearKey.addEventListener('click', handleClear);
 deleteKey.addEventListener('click', handleDelete);
-digits.forEach((digit) => digit.addEventListener('click', handleDigitClick));
-operators.forEach((opKey) => opKey.addEventListener('click', handleOperatorClick));
+digits.forEach((digit) => digit.addEventListener('click', handleDigits));
+operators.forEach((opKey) => opKey.addEventListener('click', handleOperator));
 equalKey.addEventListener('click', handleEqual);
 decimalKey.addEventListener('click', handleDecimal);
-positiveMinusKey.addEventListener('click', handlePositiveMinus);
+positiveMinusKey.addEventListener('click', handleModifier);
 percentageKey.addEventListener('click', handlePercentage);
