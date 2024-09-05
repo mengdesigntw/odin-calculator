@@ -55,8 +55,8 @@ FD3 click on the percentage, will have no effect taken
 FD4 click on decimal,this will result in temporary become '0.' and calHistory and currentDisplay reflect on the temporary, and clearDisplay become 'C'
 FD5 click on delete, will have no effect taken
 FD6 click on equal, will have no effect taken
-FD7 click on operator, this will store an 0 in the inputs, target operator will be stored on tempOperator,
-                     calHistory will display the inputs and tempOperator, currentDisplay will display inputs, and clearDisplay become C, toggle the focus on for tempOperator
+⚡️FD7 click on operator, this will store an 0 in the inputs, target operator will be stored on tempOperator, and toggle the focus on, temp will be stored inputs
+                     calHistory will display the inputs and tempOperator, currentDisplay will temp, and clearDisplay become C, 
 
 ❤️/E&E0: 7.(!inputs, temp) - A4:78. - B4&E2:(-7.) 
 E0 click on the decimal, same as C4
