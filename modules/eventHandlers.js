@@ -16,11 +16,11 @@ function updateDisplay() {
 
 function setClearDisplay() {
   if (!inputs.length && temporary) {
-    clearKey.textContent = 'C'; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 H7-1 H7-2
+    clearKey.textContent = 'C'; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 H7-1 H7-2 G7-4,6
   } else if (inputs.length && !temporary) {
     if (!storedOperator) {
-      if (!tempOperator) clearKey.textContent = 'AC'; //G G7-4,6
-      if (tempOperator) clearKey.textContent = 'C'; //H D7 H0
+      if (!tempOperator) clearKey.textContent = 'AC'; //G
+      if (tempOperator) clearKey.textContent = 'C'; //D7
     } else if (storedOperator) {
       clearKey.textContent = 'AC'; //H7 H7-0
       if (storedOperator == '/' && inputs[1] == 0) clearKey.textContent = 'AC';
@@ -28,14 +28,14 @@ function setClearDisplay() {
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
       if (!total) {
-        clearKey.textContent = 'C'; //G7 G7-0
+        clearKey.textContent = 'C'; //G7 G7-0 H H0
       } else if (total !== 'NaN' || total !== 'Infinity') {
         clearKey.textContent = 'C'; //H1-7
       } else if (total == 'NaN'|| total == 'Infinity') {
         clearKey.textContent = 'AC';
       }
     } else if (storedOperator) {
-      clearKey.textContent = 'C'; //H1,2,3,5 G7-1,2,3,5 ,H1-1, DF7-2-1
+      clearKey.textContent = 'C'; //H1,2,3,5 G7-1,2,3,5 ,H1-1, DF7-2-1, DF7-2
     }
   } else if (!inputs.length && !temporary) {
     clearKey.textContent = 'AC'; //default D F G4 G6
@@ -48,11 +48,11 @@ function setCalHistory() {
   const displayTotal = modDisplay(total);
 
   if (!inputs.length && temporary) {
-    calHistory.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6
+    calHistory.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 G7-4,6
   } else if (inputs.length && !temporary) {
     if (!storedOperator) {
-      if (!tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]}`; //G G7-4,6
-      if (tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; // H D7 H0
+      if (!tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]}`; //G
+      if (tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; // D7
     } else if (storedOperator) {
       calHistory.textContent = `${displayInputs[0]} ${storedOperator} ${displayInputs[1]}`; //H7 G7-7 H1-6 H7-0 H1-7-7
       if (storedOperator == '/' && inputs[1] == 0) calHistory.textContent = '';
@@ -60,14 +60,14 @@ function setCalHistory() {
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
       if (!total) {
-        calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; //G7 G7-0 H7-7
+        calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; //G7 G7-0 H7-7 H H0
       } else if (total !== 'NaN'|| total !== 'Infinity') {
         calHistory.textContent = `${displayTotal} ${tempOperator}`; //H1-7, H1-7-0
       } else if (total == 'NaN'|| total == 'Infinity') {
         calHistory.textContent = '';
       }
     } else if (storedOperator) {
-      calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${storedOperator}`; //H1,2,3,5 G7-1,2,3,5 ,H1-0,1,2, H1-7-1
+      calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${storedOperator}`; //DF7-2, H1,2,3,5 G7-1,2,3,5 ,H1-0,1,2, H1-7-1
     }
   } else if (!inputs.length && !temporary) {
     calHistory.textContent = ''; //default D F G4 G6 H7-4
@@ -80,25 +80,25 @@ function setCurrentDisplay() {
   const displayTotal = modDisplay(total);
 
   if (!inputs.length && temporary) {
-    currentValue.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6
+    currentValue.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 G7-4,6
   } else if (inputs.length && !temporary) {
     if (!storedOperator) {
-      if (!tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //G G7-4,6
-      if (tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //H H0
+      if (!tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //G
+      if (tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //
     } else if (storedOperator) {
       currentValue.textContent = `${displayTotal}`; //H7 H7-0
       if (storedOperator == '/' && inputs[1] == 0) currentValue.textContent = 'Naughty ❤️';
     }
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
-      if (!total) currentValue.textContent = `${displayTemp}`; //G7 G7-0 H7-7
+      if (!total) currentValue.textContent = `${displayTemp}`; //G7 G7-0 H7-7 H H0
       if (total !== 'NaN'|| total !== 'Infinity') {
         currentValue.textContent = `${displayTemp}`; //H1-7
       } else if (total == 'NaN'|| total == 'Infinity') {
         currentValue.textContent = 'Naughty ❤️';
       }
     } else if (storedOperator) {
-      currentValue.textContent = `${displayTemp}`; //H1,2,3,5 G7-1,2,3,5 H1-0,1
+      currentValue.textContent = `${displayTemp}`; //H1,2,3,5 G7-1,2,3,5 H1-0,1 DF7-2
     }
   } else if (!inputs.length && !temporary) {
     currentValue.textContent = '0'; // default D F G4 G6
@@ -130,7 +130,7 @@ function handleDigits(e) {
       storedOperator = tempOperator;
       tempOperator = '';
       temporary = e.target.textContent;
-      updateDisplay(); //H1
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
@@ -138,7 +138,7 @@ function handleDigits(e) {
         temporary = e.target.textContent;
         storedOperator = tempOperator;
         tempOperator = '';
-        updateDisplay(); // G7-1
+        updateDisplay(); // G7-1 H1
       } else if (total) {
         temporary = e.target.textContent;
         storedOperator = tempOperator;
@@ -179,7 +179,7 @@ function handleModifier() {
       }
     } else if (tempOperator) {
       temporary = `${inputs[inputs.length - 1]}`;
-      temporary = modOpposite(temporary); //H2 //DF7-2
+      temporary = modOpposite(temporary); //
       storedOperator = tempOperator;
       tempOperator = '';
       updateDisplay();
@@ -190,7 +190,7 @@ function handleModifier() {
         temporary = modOpposite(temporary);
         storedOperator = tempOperator;
         tempOperator = '';
-        updateDisplay(); //G7-2
+        updateDisplay(); //G7-2 H2 DF7-2
       } else if (total) {
         temporary = modOpposite(temporary);
         storedOperator = tempOperator;
@@ -233,7 +233,7 @@ function handlePercentage() {
       temporary = `${modMathResult((lastInput * lastInput) / 100)}`;
       storedOperator = tempOperator;
       tempOperator = '';
-      updateDisplay(); //H3
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
@@ -241,7 +241,7 @@ function handlePercentage() {
         temporary = `${modMathResult((lastInput * +temporary) / 100)}`;
         storedOperator = tempOperator;
         tempOperator = '';
-        updateDisplay(); //G7-3
+        updateDisplay(); //G7-3 H3
       } else if (total) {
         temporary = `${modMathResult((+total * +temporary) / 100)}`;
         inputs = [+total];
@@ -279,15 +279,15 @@ function handleClear() {
       tempOperator = '';
       temporary = `${inputs[inputs.length - 1]}`;
       inputs = [];
-      updateDisplay(); //H4
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
         toggleOperatorFocus(tempOperator);
         tempOperator = '';
-        temporary = '';
-        updateDisplay(); //G7-4
+        inputs =[]
+        updateDisplay(); //G7-4 H4
       }
       if (total) {
         toggleOperatorFocus(tempOperator);
@@ -339,7 +339,7 @@ function handleDecimal(e) {
       storedOperator = tempOperator;
       tempOperator = '';
       temporary = '0.';
-      updateDisplay(); //H5
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
@@ -347,7 +347,7 @@ function handleDecimal(e) {
         temporary = '0.';
         storedOperator = tempOperator;
         tempOperator = '';
-        updateDisplay(); //G7-5
+        updateDisplay(); //G7-5 H5
       } else if (total) {
         temporary = '0.';
         storedOperator = tempOperator;
@@ -394,15 +394,15 @@ function handleDelete() {
       tempOperator = '';
       temporary = `${inputs[inputs.length - 1]}`;
       inputs = [];
-      updateDisplay(); // H6
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
         toggleOperatorFocus(tempOperator);
         tempOperator = '';
-        temporary = '';
-        updateDisplay(); //G7-6
+        inputs = []
+        updateDisplay(); //G7-6 H7
       } else if (total) {
         toggleOperatorFocus(tempOperator);
         tempOperator = '';
@@ -452,7 +452,7 @@ function handleEqual() {
       storedOperator = tempOperator;
       tempOperator = '';
       total = `${modMathResult(doTheMath(storedOperator, inputs[0], inputs[1]))}`;
-      updateDisplay(); //H7
+      updateDisplay(); //
       if (storedOperator == '/' && inputs[1] == 0) {
         storedOperator = '';
         total = '';
@@ -468,7 +468,7 @@ function handleEqual() {
         storedOperator = tempOperator;
         tempOperator = '';
         total = `${modMathResult(doTheMath(storedOperator, inputs[0], inputs[1]))}`;
-        updateDisplay(); //G7-7
+        updateDisplay(); //G7-7 H7
         if (storedOperator == '/' && inputs[1] == 0) {
           storedOperator = '';
           total = '';
@@ -501,7 +501,6 @@ function handleOperator(e) {
   if (!inputs.length && temporary) {
     inputs.push(+temporary); //H
     tempOperator = e.target.textContent;
-    temporary = '';
     toggleOperatorFocus(tempOperator);
     updateDisplay();
   } else if (!inputs.length && !temporary) {
@@ -529,7 +528,7 @@ function handleOperator(e) {
       toggleOperatorFocus(tempOperator);
       tempOperator = e.target.textContent;
       toggleOperatorFocus(tempOperator);
-      updateDisplay(); //H0
+      updateDisplay(); //
     }
   } else if (inputs.length && temporary) {
     if (tempOperator) {
@@ -537,7 +536,7 @@ function handleOperator(e) {
         toggleOperatorFocus(tempOperator);
         tempOperator = e.target.textContent;
         toggleOperatorFocus(tempOperator);
-        updateDisplay(); //G7-0
+        updateDisplay(); //G7-0 H0
       } else if (total) {
         toggleOperatorFocus(tempOperator);
         tempOperator = e.target.textContent;

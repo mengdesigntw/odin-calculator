@@ -1,6 +1,6 @@
 1- click on 7, will result in stored the value in temporary, and set the calHistory as temporary stores, so does currentDisplay, the clearDisplay will be C
 
-❤️/7(!inputs, temp) - A5 - B0 - DF1 - E5 - G1 - H4&6 /H7-1:7 /H1-3-3,5:7
+❤️/7(!inputs, temp) - A5 - B0 - DF1 - E5 - G1 - H4&6 /H7-1:7 /H1-3-3,5:7 /G7-4,6:7
 A-click on the digit, this will result in the temporary string to concat on the target value '8', and calHistory will reflect the changes made by temporary, so does currentDisplay, the clearDisplay remains C
 B-click on the modifier, this will result in change the temporary value to opposite, and calHistory will reflect the changes made by temporary, so does currentDisplay, the clearDisplay remains C
 C-click on the percentage, this will result in temporary to divide by 100, and calHistory will reflect the changes made by temporary, so does currentDisplay, the clearDisplay remains C
@@ -9,7 +9,7 @@ E-click on the decimal, this will result in the temporary string to concat on th
 F-click on the delete, this will result in temporary to be default empty, and calHistory will back to default empty, the currentDisplay will back to default '0', the clearDisplay also back to default AC
 G-click on the equal, this will result in temporary to be stored as the first input, and temporary will be set to default empty, and calHistory will display the inputs is stored, and so does the currentDisplay, the clearDisplay also back to default AC
 H-click on the operator, this will result in temporary to be stored as the first input, and the target operator will be stored in tempOperator,
-                        then temporary will be set to default empty, then the calHistory will display the inputs is stored and the tempOperator, the currentDisplay will display the stored inputs, the clearDisplay remains C, toggle the focus on for tempOperator
+                        then the calHistory will display the inputs is stored and the tempOperator, the currentDisplay will display the tempoary, the clearDisplay remains C, toggle the focus on for tempOperator
 
 ❤️/A: 78(!inputs, temp) - A0:789 /H1-7-4,6:15
 A0 click on the digit, same as A
@@ -68,7 +68,7 @@ E5 click on delete, same as A5
 E6 click on equal, same as G
 E7 click on operator, same as H
 
-❤️/G&G0&G7-4,6:7= (inputs, !temp) - A6:(78=) - B6:(-7=) - E6(7.=)
+❤️/G&G0:7= (inputs, !temp) - A6:(78=) - B6:(-7=) - E6(7.=)
 G0 click on the equal, no effect taken
 G1 click on the digit, inputs will be back to default empty, and target value will be store in temporary, calHistory and currentDisplay will reflect, and the clearDisplay will become 'C'
 G2 click on the modifier, inputs will be stored to temporary and inputs will be back to default empty, then temporary will be mod to opposite value, calHistory and currentDisplay will reflect, and the clearDisplay will become 'C'
@@ -79,27 +79,27 @@ G6 click on delete, inputs will cack to default empty. all display back to defau
 G7 click on operator, target operator will be stored as tempOperator, temporary will be stored inputs,
                      the calHistory will display stored inputs and tempOperator, and currentDisplay will display temporary, the clear display become 'C', toggle on the operator focus
 
-❤️/H:7+ (inputs, tempOp, !temporary) - A7:78+ - B7:(-7+) - DF7:0+ - E7:(7.+) - H0:(7-)
-H0 click on the operator, this will result in toggling off the tempOperator and stored the current target to the tempOperator and toggle the focus on, the calDisplay will reflect, clearDisplay and currentDisplay remains
+❤️/H:7+ (inputs, tempOp, temporary) - A7:78+ - B7:(-7+) - DF7:0+ - E7:(7.+) - H0:(7-)
+H0 click on the operator, this will result in toggling off the tempOperator and stored the current target to the tempOperator and toggle the focus on, the calHistory will display storedInputs and tempOp, clearDisplay remains 'c', and currentDisplay display temporary
 H1 click on the digit, this will result in the tempOperator to be stored in storedOperator, and tempOperator will be default empty, the target value will be stored in temporary,
                       calHistory will display inputs and storedOp, the currentDisplay will display temporary
-H2 click on the modifier, the inputs value will be stored in temporary, and temporary will be mod to the opposite value,
+H2 click on the modifier, temporary will be mod to the opposite value,
                          the the tempOperator to be stored in storedOperator, and tempOperator will be default empty
                          calHistory will display inputs and storedOp, the currentDisplay will display temporary
-H3 click on the percentage, the inputs value will be stored in temporary, and temporary will be mod as 7*7%
+H3 click on the percentage, temporary will be mod as 7*7%
                          the the tempOperator to be stored in storedOperator, and tempOperator will be default empty
                          calHistory will display inputs and storedOp, the currentDisplay will display temporary
-H4 click on clear, this will toggle the tempOp off and tempOp will be back to default, and inputs value will be stored in temp, and inputs will be back to default empty
+H4 click on clear, this will toggle the tempOp off and tempOp will be back to default, inputs will also back to default empty
                          calHistory and currentDisplay will display the temporary, and clearDisplay remains C
 H5 click on decimal,  this will result in the tempOperator to be stored in storedOperator, and tempOperator will be default empty,
                      '0.' will be stored in temporary, calHistory will display inputs and storedOp, the currentDisplay will display temporary
-H6 click on delete, this will toggle the tempOp off and tempOp will be back to default, and inputs value will be stored in temp, and inputs will be back to default empty
+H6 click on delete, this will toggle the tempOp off and tempOp will be back to default, and inputs will be back to default empty
                          calHistory and currentDisplay will display the temporary, and clearDisplay remains C
-H7 click on equal, this will result in the inputs store the scecond value as the first one, [7,7], toggle the tempOp off and tempOp will be store in storedOp, and tempOp back to default
+H7 click on equal, this will push the tempoary to the inputs, [7,7], and temp back to default, toggle the tempOp off and tempOp will be store in storedOp, and tempOp back to default
                    the inputs then do the math and the return value will be stored in total, calHistory will display the inputs and storedOp,
                    currentDisplay display the total and clearDisplay will be AC
 
-DF7-2 click on the modifier, the inputs value will be stored in temporary, and temporary will become '-0'
+⚡️DF7-2 click on the modifier, temporary will become '-0'
                 the the tempOperator to be stored in storedOperator, and tempOperator will be default empty
                 calHistory will display inputs and storedOp, the currentDisplay will display temporary
 
@@ -114,12 +114,12 @@ G7-2 click on the modifier, temporary will be mod to the opposite value, tempOp 
                             the calHistory will display stored inputs and storedOperator, and currentDisplay will display temporary, the clear display remains 'C'
 G7-3 click on the percentage, temporary will be 7*7/100, tempOp will be store in storedOp, and tempOp will back to default empty  
                             the calHistory will display stored inputs and storedOperator, and currentDisplay will display temporary, the clear display remains 'C'
-G7-4 click on the clear, toggle the tempOp off, tempOp back to default empty, so does temporary
-                        the calHistory and currentDisplay will display stored inputs, the clear display become 'AC'
+G7-4 click on the clear, toggle the tempOp off, tempOp back to default empty, inputs back to default
+                        the calHistory and currentDisplay will display tempoary, the clear display remains 'C'
 G7-5 click on the decimal, this will result in the '0.' stored in temporary, tempOp will be store in storedOp, and tempOp will back to default empty
                             the calHistory will display stored inputs and storedOperator, and currentDisplay will display temporary, the clear display remains 'C'
-G7-6 click on delete, toggle the tempOp off, tempOp back to default empty, so does temporary
-                            the calHistory and currentDisplay will display stored inputs, the clear display become 'AC'
+G7-6 click on delete, toggle the tempOp off, tempOp back to default empty
+                            the calHistory and currentDisplay will display tempoary, the clear display remains 'C'
 G7-7 click on equal, tempoary will be push into inputs[1], temporary will back to default, tempOp will be toggled off, tempOp store in storedOp and tempOp back to default, 
                             do the Math with inputs and storedOp, and return the result in total.
                             calHistory will display the stored inputs and storedOp, currentDisplay will display total, and clearDisplay become 'AC'
