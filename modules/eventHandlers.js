@@ -29,9 +29,9 @@ function setClearDisplay() {
     if (!storedOperator) {
       if (!total) {
         clearKey.textContent = 'C'; //G7 G7-0
-      } else if (total !== 'NaN') {
+      } else if (total !== 'NaN' || total !== 'Infinity') {
         clearKey.textContent = 'C'; //H1-7
-      } else if (total == 'NaN') {
+      } else if (total == 'NaN'|| total == 'Infinity') {
         clearKey.textContent = 'AC';
       }
     } else if (storedOperator) {
@@ -61,9 +61,9 @@ function setCalHistory() {
     if (!storedOperator) {
       if (!total) {
         calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; //G7 G7-0 H7-7
-      } else if (total !== 'NaN') {
+      } else if (total !== 'NaN'|| total !== 'Infinity') {
         calHistory.textContent = `${displayTotal} ${tempOperator}`; //H1-7, H1-7-0
-      } else if (total == 'NaN') {
+      } else if (total == 'NaN'|| total == 'Infinity') {
         calHistory.textContent = '';
       }
     } else if (storedOperator) {
@@ -92,9 +92,9 @@ function setCurrentDisplay() {
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
       if (!total) currentValue.textContent = `${displayTemp}`; //G7 G7-0 H7-7
-      if (total !== 'NaN') {
+      if (total !== 'NaN'|| total !== 'Infinity') {
         currentValue.textContent = `${displayTemp}`; //H1-7
-      } else if (total == 'NaN') {
+      } else if (total == 'NaN'|| total == 'Infinity') {
         currentValue.textContent = 'Naughty ❤️';
       }
     } else if (storedOperator) {
@@ -488,7 +488,7 @@ function handleEqual() {
       toggleOperatorFocus(storedOperator);
       total = `${modMathResult(doTheMath(storedOperator, inputs[0], inputs[1]))}`;
       updateDisplay(); //H1-6
-      if (total == 'NaN') {
+      if (total == 'NaN' || total == 'Infinity') {
         total = '';
         inputs = [];
         storedOperator = '';
@@ -553,7 +553,7 @@ function handleOperator(e) {
       temporary = total;
       storedOperator = '';
       updateDisplay(); //H1-7
-      if (total == 'NaN') {
+      if (total == 'NaN'|| total == 'Infinity') {
         temporary = '';
         total = '';
         toggleOperatorFocus(tempOperator);
