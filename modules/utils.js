@@ -1,4 +1,4 @@
-import { plusKey, divideKey, minusKey, multiplyKey } from './globals.js';
+import { plusKey, divideKey, minusKey, multiplyKey, clearKey, calHistory, currentValue } from './globals.js';
 
 function toggleOperatorFocus(operator) {
   if (operator == '+') plusKey.classList.toggle('focused');
@@ -105,4 +105,26 @@ function modTemporary(str) {
   }
 }
 
-export { toggleOperatorFocus, doTheMath, modMathResult, modInteger, modDisplay, modTemporary, modOpposite };
+function setClearDisplay(val = 'AC') {
+  clearKey.textContent = val;
+}
+
+function setCalHistory(val1 = '', op = '', val2 = '') {
+  calHistory.textContent = `${val1} ${op} ${val2}`;
+}
+
+function setCurrentDisplay(val = '0') {
+  currentValue.textContent = val;
+}
+export {
+  toggleOperatorFocus,
+  doTheMath,
+  modMathResult,
+  modInteger,
+  modDisplay,
+  modTemporary,
+  modOpposite,
+  setCalHistory,
+  setClearDisplay,
+  setCurrentDisplay,
+};

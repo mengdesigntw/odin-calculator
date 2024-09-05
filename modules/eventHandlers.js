@@ -1,5 +1,14 @@
-import { toggleOperatorFocus, doTheMath, modMathResult, modDisplay, modTemporary, modOpposite } from './utils.js';
-import { currentValue, calHistory, clearKey } from './globals.js';
+import {
+  toggleOperatorFocus,
+  doTheMath,
+  modMathResult,
+  modDisplay,
+  modTemporary,
+  modOpposite,
+  setCalHistory,
+  setClearDisplay,
+  setCurrentDisplay,
+} from './utils.js';
 
 //state variables
 let temporary = ''; //for multiple digit
@@ -9,99 +18,55 @@ let tempOperator = '';
 let total = '';
 
 function updateDisplay() {
-  setClearDisplay();
-  setCalHistory();
-  setCurrentDisplay();
-}
-
-function setClearDisplay() {
-  if (!inputs.length && temporary) {
-    clearKey.textContent = 'C'; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 H7-1 H7-2 G7-4,6
-  } else if (inputs.length && !temporary) {
-    if (!storedOperator) {
-      if (!tempOperator) clearKey.textContent = 'AC'; //G
-      // if (tempOperator) clearKey.textContent = 'C'; //
-    } else if (storedOperator) {
-      clearKey.textContent = 'AC'; //H7 H7-0
-      if (storedOperator == '/' && inputs[1] == 0) clearKey.textContent = 'AC';
-    }
-  } else if (inputs.length && temporary) {
-    if (!storedOperator) {
-      if (!total) {
-        clearKey.textContent = 'C'; //G7 G7-0 H H0 DF7
-      } else if (total !== 'NaN' || total !== 'Infinity') {
-        clearKey.textContent = 'C'; //H1-7
-      } else if (total == 'NaN' || total == 'Infinity') {
-        clearKey.textContent = 'AC';
-      }
-    } else if (storedOperator) {
-      clearKey.textContent = 'C'; //H1,2,3,5 G7-1,2,3,5 ,H1-1, DF7-2-1, DF7-2
-    }
-  } else if (!inputs.length && !temporary) {
-    clearKey.textContent = 'AC'; //default D F G4 G6
-  }
-}
-
-function setCalHistory() {
   const displayTemp = modDisplay(temporary);
   const displayInputs = inputs.map((val) => modDisplay(val.toString()));
   const displayTotal = modDisplay(total);
 
   if (!inputs.length && temporary) {
-    calHistory.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 G7-4,6
+    setClearDisplay('C'); //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 H7-1 H7-2 G7-4,6
+    setCalHistory(displayTemp);
+    setCurrentDisplay(displayTemp);
   } else if (inputs.length && !temporary) {
     if (!storedOperator) {
-      if (!tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]}`; //G
-      // if (tempOperator) calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; //
+      if (!tempOperator) {
+        setClearDisplay(); //G
+        setCalHistory(displayInputs[displayInputs.length - 1]);
+        setCurrentDisplay(displayInputs[displayInputs.length - 1]);
+      }
     } else if (storedOperator) {
-      calHistory.textContent = `${displayInputs[0]} ${storedOperator} ${displayInputs[1]}`; //H7 G7-7 H1-6 H7-0 H1-7-7
-      if (storedOperator == '/' && inputs[1] == 0) calHistory.textContent = '';
+      setClearDisplay(); //H7 G7-7 H1-6 H7-0 H1-7-7
+      setCalHistory(displayInputs[0], storedOperator, displayInputs[1]);
+      setCurrentDisplay(displayTotal);
+      if (storedOperator == '/' && inputs[1] == 0) {
+        setClearDisplay();
+        setCalHistory();
+        setCurrentDisplay('Naughty ❤️');
+      }
     }
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
       if (!total) {
-        calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${tempOperator}`; //G7 G7-0 H7-7 H H0 DF7
+        setClearDisplay('C'); //G7 G7-0 H7-7 H H0 DF7
+        setCalHistory(displayInputs[displayInputs.length - 1], tempOperator);
+        setCurrentDisplay(displayTemp);
       } else if (total !== 'NaN' || total !== 'Infinity') {
-        calHistory.textContent = `${displayTotal} ${tempOperator}`; //H1-7, H1-7-0
+        setClearDisplay('C'); //H1-7
+        setCalHistory(displayTotal, tempOperator);
+        setCurrentDisplay(displayTemp);
       } else if (total == 'NaN' || total == 'Infinity') {
-        calHistory.textContent = '';
+        setClearDisplay();
+        setCalHistory();
+        setCurrentDisplay('Naughty ❤️');
       }
     } else if (storedOperator) {
-      calHistory.textContent = `${displayInputs[displayInputs.length - 1]} ${storedOperator}`; //DF7-2, H1,2,3,5 G7-1,2,3,5 ,H1-0,1,2, H1-7-1
+      setClearDisplay('C'); //DF7-2, H1,2,3,5 G7-1,2,3,5 ,H1-0,1,2, H1-7-1
+      setCalHistory(displayInputs[displayInputs.length - 1], storedOperator);
+      setCurrentDisplay(displayTemp);
     }
   } else if (!inputs.length && !temporary) {
-    calHistory.textContent = ''; //default D F G4 G6 H7-4
-  }
-}
-
-function setCurrentDisplay() {
-  const displayTemp = modDisplay(temporary);
-  const displayInputs = inputs.map((val) => modDisplay(val.toString()));
-  const displayTotal = modDisplay(total);
-
-  if (!inputs.length && temporary) {
-    currentValue.textContent = `${displayTemp}`; //7 A B C E A5 D2 D4 G2 G3 G5 H4 H6 G7-4,6
-  } else if (inputs.length && !temporary) {
-    if (!storedOperator) {
-      if (!tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //G
-      // if (tempOperator) currentValue.textContent = `${displayInputs[displayInputs.length - 1]}`; //
-    } else if (storedOperator) {
-      currentValue.textContent = `${displayTotal}`; //H7 H7-0
-      if (storedOperator == '/' && inputs[1] == 0) currentValue.textContent = 'Naughty ❤️';
-    }
-  } else if (inputs.length && temporary) {
-    if (!storedOperator) {
-      if (!total) currentValue.textContent = `${displayTemp}`; //G7 G7-0 H7-7 H H0 DF7
-      if (total !== 'NaN' || total !== 'Infinity') {
-        currentValue.textContent = `${displayTemp}`; //H1-7
-      } else if (total == 'NaN' || total == 'Infinity') {
-        currentValue.textContent = 'Naughty ❤️';
-      }
-    } else if (storedOperator) {
-      currentValue.textContent = `${displayTemp}`; //H1,2,3,5 G7-1,2,3,5 H1-0,1 DF7-2
-    }
-  } else if (!inputs.length && !temporary) {
-    currentValue.textContent = '0'; // default D F G4 G6
+    setClearDisplay(); //default D F G4 G6 H7-4
+    setCalHistory();
+    setCurrentDisplay();
   }
 }
 
