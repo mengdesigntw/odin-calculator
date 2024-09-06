@@ -190,11 +190,11 @@ function handleClear() {
 }
 
 function handleDecimal(e) {
-  if (temporary.includes('.')) return; //C4 H3-4
   if (!inputs.length && !temporary) {
     temporary = '0.'; //D4
   } else if (!inputs.length && temporary) {
-    temporary += e.target.textContent; // A E G5
+    if (temporary.includes('.')) return; //C4
+    if (!temporary.includes('.')) temporary += e.target.textContent; // A E G5
   } else if (inputs.length && !temporary) {
     inputs = [];
     temporary = '0.';
@@ -212,7 +212,8 @@ function handleDecimal(e) {
       total = '';
       tempOperator = '';
     } else if (!tempOperator) {
-      temporary += e.target.textContent; //H1-4
+      if (temporary.includes('.')) return; //H3-4
+      if (!temporary.includes('.')) temporary += e.target.textContent; //H1-4
     }
   }
   updateDisplay();
