@@ -148,6 +148,18 @@ H1-7-7, click on the equal, total will be the inputs first value as fresh start,
                             do the math with inputs and storedOp, and return the result in total, 
                             calHistory will diaply inputs and storedOp, currentDisplay will display total, clearDisplay becomes 'AC'
 
+H1-7m:0/0- (inputs, tempOp, temp, !storedOp, total='NaN')
+H1-7m-0 click on the operator, inputs will be [0], target content will store in tempOp and toggle it on, tempoary will be stored inputs, total back to default
+                        calHistory display inputs and tempOp, currentDispaly is tempoary, clearDispaly is 'C'
+H1-7m-1 click on the digits, inputs, tempOp and total back to default, target value will be stored in temporary. 
+H1-7m-2 click on the modifier, inputs, tempOp, total  and temp back to default
+H1-7m-3 click on the percentage, inputs, tempOp, total  and temp back to default
+H1-7m-4 click on the clear, inputs, tempOp, total  and temp back to default
+H1-7m-5 click on the decimal,  this will result in the '0.' stored in temporary, inputs, tempOp and total back to default
+                        calHistory and currentDispaly will display tempoary and clearDispaly is 'c'
+H1-7m-6 click on the delete, inputs, tempOp, total  and temp back to default
+H1-7m-7 click on the equal, this will take no effect
+
 ❤️/H1&H1-0-5&H1-3-0: 7+8 (inputs, !tempOp, temporary, storedOp)/H2&G7-2 :7+(-7) /H3&G7-3:7+(0.49) /H5&G7-5:7+(0.) /DF7-2 0+(-0) /G7-1:7+8 /H7-3-1:7+(-0)
 /H1-0:7+89 /H1-1:7+(-8) /H1-2:7+(0.56) /H1-3,5:7+0 /H1-4:7+(8.) /H3-5:7+(0.4) /H5-1:7+(-0.) /H1-7-1:15-9 /H1-7-2:15-(-15) /H1-7-3:15-2.25 /H1-7-5:15-(0.)
 /DF7-2-1:0+(-8) /H1-4-1:7+(-8.)
@@ -163,6 +175,8 @@ H1-6 click on the equal, tempoary will be push into inputs[1], temporary will ba
 H1-7 click on the operator, tempoary will be push into inputs[1], storedOp will be toggle off, target value will be stored in tempOp and toggle it on.
                     do the Math with inputs and storedOp, and return the result in total. total will be stored in temporary. storedOp will be back to default
                     calHistory will display total and tempOp, currentDisplay will display temporay. clearDisplay remains 'C'
+H1-7m: 0/0 toggle off tempOp after H1-7
+H1-6m: 0/0 same as H1-6
 
 H3-4 click on the decimal, will take no effect
 H3-5 click on the delete, this will slice the tempoary off one digit, calHistory will display inputs and storedOp, the currentDisplay will display temporary, the clear display remains 'C'
@@ -203,3 +217,16 @@ H7-5 click on decimal, inputs will back to default, '0.' will be temporary,  tot
 H7-6 click on delete, inputs back to default, so does storedOp and total, calHistory, currentDispaly and clearDisplay back to default
 H7-7 click on operator, total will store in inputs as fresh start, tempoary will be the stored inputs value, target content will be stored in tempOp, and toggle it on, storedOp and total back to default,
                         calHistore will display inputs and tempOp, currentDisplay will display temporay, and the clearDisplay becomes 'C'
+
+
+H7m:0/= (inputs, !tempOp, !temp , storedOp, total = 'NaN') H1-6m: 0/0=
+
+H7m-0 click on the equal, takes no effect
+H7m-1 click on the digits, same as H7-1
+H7m-2 click on the modifier, inputs and total and storedOp will back to default
+H7m-3 click on the percentage, inputs and total and storedOp will back to default                      
+H7m-4 click on the clear, same as H7-4
+H7m-5 click on the decimal, same as H7-5
+H7m-6 click on the delete, same as H7-6
+H7m-7 click on the operator, inputs will be [0], and tempoary will be stored inputs, target content will be stored in tempOp, and toggle it on
+                    storedOp and total back to default, calHistore will display inputs and tempOp, currentDisplay will display temporay, and the clearDisplay becomes 'C'
