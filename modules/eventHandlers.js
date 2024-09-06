@@ -27,19 +27,13 @@ function updateDisplay() {
     setCalHistory(displayTemp);
     setCurrentDisplay(displayTemp);
   } else if (inputs.length && !temporary) {
-    if (!storedOperator) {
-        // setClearDisplay(); //
-        // setCalHistory(displayInputs[displayInputs.length - 1]);
-        // setCurrentDisplay(displayInputs[displayInputs.length - 1]);
-    } else if (storedOperator) {
-      setClearDisplay(); //H7 G7-7 H1-6 H7-0 H1-7-7
-      setCalHistory(displayInputs[0], storedOperator, displayInputs[1]);
-      setCurrentDisplay(displayTotal);
-      if (storedOperator == '/' && inputs[1] == 0) {
-        setClearDisplay();
-        setCalHistory();
-        setCurrentDisplay('Naughty ❤️');
-      }
+    setClearDisplay(); //H7 G7-7 H1-6 H7-0 H1-7-7
+    setCalHistory(displayInputs[0], storedOperator, displayInputs[1]);
+    setCurrentDisplay(displayTotal);
+    if (total == 'NaN' || total == 'Infinity') {
+      setClearDisplay();
+      setCalHistory();
+      setCurrentDisplay('Naughty ❤️');
     }
   } else if (inputs.length && temporary) {
     if (!storedOperator) {
@@ -77,19 +71,11 @@ function handleDigits(e) {
     temporary = modTemporary(temporary); //DF2
     updateDisplay();
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // inputs = [];
-        // temporary = e.target.textContent; //
-        // updateDisplay();
-      } else if (total) {
-        inputs = [];
-        temporary = e.target.textContent;
-        total = '';
-        storedOperator = '';
-        updateDisplay(); // H7-1
-      }
-    }
+    inputs = [];
+    temporary = e.target.textContent;
+    total = '';
+    storedOperator = '';
+    updateDisplay(); // H7-1
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -121,21 +107,12 @@ function handleModifier() {
     temporary = '-0';
     updateDisplay(); //D2
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // temporary = `${inputs[inputs.length - 1]}`;
-        // inputs = [];
-        // temporary = modOpposite(temporary);
-        // updateDisplay(); //
-      } else if (total) {
-        inputs = [];
-        temporary = total;
-        temporary = modOpposite(temporary);
-        total = '';
-        storedOperator = '';
-        updateDisplay(); //H7-2
-      }
-    }
+    inputs = [];
+    temporary = total;
+    temporary = modOpposite(temporary);
+    total = '';
+    storedOperator = '';
+    updateDisplay(); //H7-2
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -166,21 +143,12 @@ function handlePercentage() {
   } else if (!inputs.length && !temporary) {
     updateDisplay(); //D3
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // temporary = `${lastInput}`;
-        // inputs = []; //
-        // temporary = `${modMathResult(+temporary / 100)}`;
-        // updateDisplay();
-      } else if (total) {
-        inputs = [];
-        temporary = total;
-        temporary = `${modMathResult(+total / 100)}`;
-        total = '';
-        storedOperator = '';
-        updateDisplay(); //H7-3
-      }
-    }
+    inputs = [];
+    temporary = total;
+    temporary = `${modMathResult(+total / 100)}`;
+    total = '';
+    storedOperator = '';
+    updateDisplay(); //H7-3
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -210,17 +178,10 @@ function handleClear() {
   } else if (!inputs.length && !temporary) {
     updateDisplay(); //D0
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // inputs = [];
-        // updateDisplay(); //
-      } else if (total) {
-        inputs = [];
-        storedOperator = '';
-        total = '';
-        updateDisplay(); //H7-4
-      }
-    }
+    inputs = [];
+    storedOperator = '';
+    total = '';
+    updateDisplay(); //H7-4
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -263,19 +224,11 @@ function handleDecimal(e) {
     temporary = '0.'; //D4
     updateDisplay();
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // inputs = [];
-        // temporary = '0.';
-        // updateDisplay(); //
-      } else if (total) {
-        inputs = [];
-        temporary = '0.';
-        storedOperator = '';
-        total = '';
-        updateDisplay(); //H7-5
-      }
-    }
+    inputs = [];
+    temporary = '0.';
+    storedOperator = '';
+    total = '';
+    updateDisplay(); //H7-5
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -314,17 +267,10 @@ function handleDelete() {
   } else if (!inputs.length && !temporary) {
     updateDisplay();
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // inputs = []; //
-        // updateDisplay();
-      } else if (total) {
-        inputs = [];
-        storedOperator = '';
-        total = '';
-        updateDisplay(); //H7-6
-      }
-    }
+    inputs = [];
+    storedOperator = '';
+    total = '';
+    updateDisplay(); //H7-6
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -368,14 +314,9 @@ function handleEqual() {
   } else if (!inputs.length && !temporary) {
     return; //D6
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      // if (!total) return; //
-      if (total) {
-        inputs[0] = +total;
-        total = `${modMathResult(doTheMath(storedOperator, inputs[0], inputs[1]))}`;
-        updateDisplay(); //H7-0
-      }
-    }
+    inputs[0] = +total;
+    total = `${modMathResult(doTheMath(storedOperator, inputs[0], inputs[1]))}`;
+    updateDisplay(); //H7-0
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
@@ -389,7 +330,7 @@ function handleEqual() {
         if (total == 'NaN' || total == 'Infinity') {
           storedOperator = '';
           total = '';
-          inputs=[]
+          inputs = [];
         }
       } else if (total) {
         inputs = [+total, +temporary];
@@ -428,22 +369,13 @@ function handleOperator(e) {
     temporary = `${inputs[inputs.length - 1]}`;
     updateDisplay(); //DF7
   } else if (inputs.length && !temporary) {
-    if (!tempOperator) {
-      if (!total) {
-        // tempOperator = e.target.textContent;
-        // temporary = `${inputs[inputs.length - 1]}`;
-        // toggleOperatorFocus(tempOperator);
-        // updateDisplay(); //
-      } else if (total) {
-        inputs = [+total];
-        temporary = `${inputs[inputs.length - 1]}`;
-        tempOperator = e.target.textContent;
-        toggleOperatorFocus(tempOperator);
-        storedOperator = '';
-        total = '';
-        updateDisplay(); //H7-7
-      }
-    }
+    inputs = [+total];
+    temporary = `${inputs[inputs.length - 1]}`;
+    tempOperator = e.target.textContent;
+    toggleOperatorFocus(tempOperator);
+    storedOperator = '';
+    total = '';
+    updateDisplay(); //H7-7
   } else if (inputs.length && temporary) {
     if (tempOperator) {
       if (!total) {
